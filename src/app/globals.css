@@ -11,13 +11,14 @@
   --color-custom3: #026773;
   --color-custom4: #024959;
   --color-custom5: #012E40;
+  --color-custom2_1: #7ED5D4;
+  --color-custom3_1: #00545E;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
 }
 
 

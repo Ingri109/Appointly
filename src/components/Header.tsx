@@ -1,6 +1,6 @@
 import LogoImg from "@/imgs/LogoIMG.png";
 import Image from "next/image";
-import SotionImage from "@/components/SotionMedia";
+import SotionImage from "@/components/SocialMedia";
 import OtherButtons from "@/components/OtherButtons";
 
 const Header = () => {
