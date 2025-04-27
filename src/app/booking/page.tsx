@@ -14,4 +14,4 @@ const Booking = () => {
         </main>
     )
 }
-export default Booking
+export default Booking;
