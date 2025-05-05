@@ -2,6 +2,9 @@
 
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import EyeOpen from "@/icons/eye_open.svg";
+import EyeClose from "@/icons/eye_close.svg";
+import Image from "next/image";
 
 type LogInProps = {
     onToggleForm: () => void;
@@ -11,6 +14,7 @@ const LogIn = ({onToggleForm}: LogInProps) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
+    const [showPassword, setShowPassword] = useState(true);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -28,6 +32,11 @@ const LogIn = ({onToggleForm}: LogInProps) => {
             window.location.reload();
         }
     };
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(prev => !prev);
+    };
+
     return (
         <>
             <h1 className="text-5xl font-bold text-[#003147] mb-8">Log in</h1>
@@ -45,10 +54,13 @@ const LogIn = ({onToggleForm}: LogInProps) => {
                     />
                 </div>
 
-                <div className="flex flex-col w-[280px]">
+                <div className="relative flex flex-col w-[280px]">
                     <label className="text-custom1 font-bold mb-1">Password</label>
+                    <span onClick={togglePasswordVisibility} className={'absolute top-7 right-0 p-2 cursor-pointer'}>
+                        <Image className={'w-8 h-8 '} src={showPassword? EyeOpen : EyeClose} alt={'Open Password'} />
+                    </span>
                     <input
-                        type="password"
+                        type={showPassword ? 'password' : 'text'}
                         name="Password"
                         onChange={(e) => setPassword(e.target.value)}
                         autoComplete="on"

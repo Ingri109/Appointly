@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import Image from "next/image";
+import EyeOpen from "@/icons/eye_open.svg";
+import EyeClose from "@/icons/eye_close.svg";
 
 type RegistrationProps = {
     onToggleForm: () => void;
@@ -11,6 +14,7 @@ const Registration = ({onToggleForm}: RegistrationProps) => {
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState('');
     const [message, setMessage] = useState('');
+    const [showPassword, setShowPassword] = useState(true);
 
     const handleRegister = async (e: React.FormEvent) =>{
         e.preventDefault();
@@ -33,6 +37,10 @@ const Registration = ({onToggleForm}: RegistrationProps) => {
             setFullName('');
         }
     }
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(prev => !prev);
+    };
     return (
        <>
            <h1 className="text-5xl font-bold text-custom5 mb-8">Sign in</h1>
@@ -64,10 +72,13 @@ const Registration = ({onToggleForm}: RegistrationProps) => {
                    />
                </div>
 
-               <div className="flex flex-col w-[280px]">
+               <div className="relative flex flex-col w-[280px]">
                    <label className="text-custom1 font-bold mb-1">Password</label>
+                   <span onClick={togglePasswordVisibility} className={'absolute top-7 right-0 p-2 cursor-pointer'}>
+                        <Image className={'w-8 h-8 '} src={showPassword? EyeOpen : EyeClose} alt={'Open Password'} />
+                    </span>
                    <input
-                       type="password"
+                       type={showPassword ? 'password' : 'text'}
                        name="Password"
                        autoComplete="on"
                        required
