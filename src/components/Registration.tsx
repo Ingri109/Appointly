@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from "next/image";
 import EyeOpen from "@/icons/eye_open.svg";
@@ -10,6 +11,7 @@ type RegistrationProps = {
 };
 
 const Registration = ({onToggleForm}: RegistrationProps) => {
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState('');
@@ -35,6 +37,7 @@ const Registration = ({onToggleForm}: RegistrationProps) => {
             setEmail('');
             setPassword('');
             setFullName('');
+            router.push('/Account');
         }
     }
 
