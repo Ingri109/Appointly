@@ -4,19 +4,27 @@ import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 export const config = {
-    matcher: ['/Account'],
+    matcher: ['/', '/Login', '/Account', '/Visits', '/Booking'],
 };
 
 export async function middleware(req: NextRequest) {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-    const protectedPaths = ['/Account'];
+    const isLoggedIn = !!token;
+    const currentPath = req.nextUrl.pathname;
 
-    const isProtected = protectedPaths.some((path) => req.nextUrl.pathname.startsWith(path));
-
-    if (isProtected && !token) {
-        return NextResponse.redirect(new URL('/Login', req.url)); // редірект на сторінку входу
+    // Якщо користувач не в сесії
+    if (!isLoggedIn) {
+        if (currentPath !== '/' && currentPath !== '/Login') {
+            return NextResponse.redirect(new URL('/Login', req.url));
+        }
+    } else {
+        // Якщо користувач в сесії
+        if (currentPath === '/Login') {
+            return NextResponse.redirect(new URL('/Account', req.url));
+        }
     }
 
-    return NextResponse.next(); // дозвіл на доступ
+    return NextResponse.next();
 }
+

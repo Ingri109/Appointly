@@ -24,16 +24,16 @@ const CardForBooking = ( {worker}: CardForBookingProps) =>{
                 <div className={'flex flex-row justify-between items-end space-x-1 '}>
                     <div className={'flex flex-col justify-start mt-3'}>
                         <div className={'flex flex-row justify-start space-x-1'}>
-                            <h2 className={'text-custom5 font-semibold text-[14px]'}>Location:</h2>
+                            <h2 className={'text-custom5 font-semibold text-[14px]'}>Lokalizacja:</h2>
                             <span className={'text-custom3 font-bold text-[14px]'}>{worker.location}</span>
                         </div>
                         <div className={'flex flex-row justify-start space-x-1'}>
-                            <h2 className={'text-custom5 font-semibold text-[14px]'}>Category:</h2>
+                            <h2 className={'text-custom5 font-semibold text-[14px]'}>Kategoria:</h2>
                             <span className={'text-custom3 font-bold text-[14px]'}>{worker.category}</span>
                         </div>
                     </div>
                     <Link href={`/Booking/${worker.id}`} className={ 'text-[14px] font-medium text-custom1 bg-custom3 py-1 px-4 rounded-xl transition-all shadow-[0_0_14px_4px_rgba(0,0,0,0.35)] hover:bg-custom3.1 hover:scale-110 '}>
-                        Appointment
+                        Rezerwacja
                     </Link>
                 </div>
             </div>

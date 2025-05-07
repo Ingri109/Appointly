@@ -17,9 +17,9 @@ interface NavLinkType {
 }
 
 const navLinks: NavLinkType[] = [
-    {id: 1, link: '/Account', image: Human, alt: 'Go to your account',  title: 'Account'},
-    {id: 2, link: '/Visiting', image: Calender, alt: 'Go to your visits', title: 'Visits'},
-    {id: 3, link: '/Booking', image: Pen, alt: 'Go to Booking', title: 'Booking'},
+    {id: 1, link: '/Account', image: Human, alt: 'Go to your account',  title: 'Konto'},
+    {id: 2, link: '/Visits', image: Calender, alt: 'Go to your visits', title: 'Odwiedziny'},
+    {id: 3, link: '/Booking', image: Pen, alt: 'Go to Booking', title: 'Rezerwacja'},
 ];
 
 

@@ -19,16 +19,31 @@ type Worker = {
 
 const Booking = () => {
     const [workers, setWorkers] = useState<Worker[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchWorkers = async () => {
             const res = await fetch('/api/workers');
             const data = await res.json();
             setWorkers(data);
+            setLoading(false);
         };
 
         fetchWorkers();
     }, []);
+    if (loading) {
+        return (
+            <main className="flex">
+                <Menu />
+                <section className="flex-1 flex items-center justify-center">
+                    <div className="text-center">
+                        <div className="w-12 h-12 border-4 border-[#3CA6A6] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                        <p>Loading user data...</p>
+                    </div>
+                </section>
+            </main>
+        );
+    }
 
     return (
         <main className={'flex'}>

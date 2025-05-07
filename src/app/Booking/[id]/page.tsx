@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Menu from '@/components/Menu';
 import Stars from '@/components/Stars';
+import { useAppointmentDate } from "@/hooks/useAppointmentDate";
 
-// Тип для моделі працівника
 type Worker = {
     id: string;
     fullName: string;
@@ -38,8 +38,46 @@ export default function WorkerPage({
         data: null,
     });
     const [workerId, setWorkerId] = useState<string | null>(null);
+    const { getDefaultDateTime, getMinDateTime } = useAppointmentDate();
+    const [value, setValue] = useState(getDefaultDateTime());
 
-    // Отримуємо ID з params
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        setValue(val);
+
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!workerId) return;
+
+        try {
+            const res = await fetch('/api/appointments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    workerId,
+                    datetime: value,
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.error || 'Błąd podczas rezerwacji.');
+            } else {
+                alert('Rezerwacja powiodła się!');
+                router.push('/Visits'); // або інша сторінка
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Wystąpił nieoczekiwany błąd.');
+        }
+    };
+
     useEffect(() => {
         async function resolveParams() {
             try {
@@ -124,7 +162,7 @@ export default function WorkerPage({
                 <div className="bg-white rounded-lg shadow-lg p-6">
                     {/* — Worker Info — */}
                     <div className="flex items-start mb-8">
-                        <div className="w-24 h-24 bg-gray-300 rounded-full" />
+                        <div className="w-48 h-48 bg-gray-500 rounded-full" />
                         <div className="ml-8 flex-1">
                             <h2 className="text-3xl font-bold text-custom5">
                                 {worker.fullName}
@@ -164,10 +202,10 @@ export default function WorkerPage({
                     </div>
 
 
-                    <div className="flex flex-col lg:flex-row gap-8 w-full lg:w-1/1">
+                    <div className="flex flex-row justify-between items-end lg:flex-row gap-8 w-full lg:w-1/1">
                         {/* Schedule table */}
-                        <div className="flex-1 bg-[#E8F5F2] p-4 rounded-2xl border-4 border-[#004D5A]">
-                            <h4 className="text-3xl font-bold text-[#003237] mb-4 text-center">
+                        <div className="flex-1 bg-[#E8F5F2] p-4 rounded-2xl border-2 border-[#004D5A]">
+                            <h4 className="text-xl font-bold text-[#003237] mb-4 text-center">
                                 Dni i godziny pracy
                             </h4>
                             <table className="w-full border-separate border-spacing-y-2">
@@ -183,12 +221,12 @@ export default function WorkerPage({
                                 ].map(([day, hours]) => (
                                     <tr
                                         key={day}
-                                        className="bg-white rounded-lg overflow-hidden"
+                                        className="bg-white rounded-lg overflow-hidden hover:scale-105 hover:shadow-lg hover:p"
                                     >
-                                        <td className="px-4 py-3 text-xl font-medium text-[#004D5A]">
+                                        <td className="px-2 py-1 text-[12px] font-semibold text-[#004D5A]">
                                             {day}
                                         </td>
-                                        <td className="px-4 py-3 text-xl font-semibold text-[#2AA79B] text-right">
+                                        <td className="px-2 py-1 text-[12px] font-semibold text-[#2AA79B] text-right">
                                             {hours}
                                         </td>
                                     </tr>
@@ -198,7 +236,7 @@ export default function WorkerPage({
                         </div>
 
                         {/* Date-picker form */}
-                        <form className="w-full lg:w-1/3 bg-white p-6 rounded-xl shadow-md">
+                        <form onSubmit={handleSubmit} className="flex flex-col w-full lg:w-1/3 bg-white p-6 rounded-xl shadow-md border border-gray-300">
                             <label
                                 htmlFor="visit-date"
                                 className="block mb-2 text-lg font-semibold text-[#004D5A]"
@@ -206,11 +244,13 @@ export default function WorkerPage({
                                 Wybierz datę wizyty:
                             </label>
                             <input
-                                type="date"
-                                id="visit-date"
-                                name="visitDate"
+                                type="datetime-local"
+                                value={value}
+                                onChange={handleChange}
+                                min={getMinDateTime()}
                                 className="w-full p-2 border border-gray-300 rounded mb-4"
                             />
+
                             <button
                                 type="submit"
                                 className="bg-[#00545E] hover:bg-[#2D7C88] text-custom1 text-lg font-semibold py-2 px-10 rounded-xl mt-3 hover:scale-105 transition"
@@ -218,13 +258,6 @@ export default function WorkerPage({
                                 Zarezerwuj termin
                             </button>
                         </form>
-                    </div>
-
-                    {/* “Appointment” button  */}
-                    <div className="mt-8 text-right">
-                        <button className="bg-[#00545E] hover:bg-[#2D7C88] text-custom1 text-lg font-semibold py-2 px-10 rounded-xl mt-2 hover:scale-105 transition">
-                            Appointment
-                        </button>
                     </div>
                 </div>
 

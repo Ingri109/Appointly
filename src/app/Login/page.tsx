@@ -2,6 +2,7 @@
 import {useState} from 'react';
 import LogIn from "@/components/LogIn";
 import Registration from "@/components/Registration";
+import LogoGif from "@/components/LogoGif";
 
 
 const LoginPage = () => {
@@ -21,15 +22,15 @@ const LoginPage = () => {
         <section className="min-h-screen flex overflow-hidden">
 
             <div
-                className={`w-[45%] h-screen bg-custom5 transition-all duration-500 ease-in-out ${
+                className={`w-[40%] h-screen bg-custom5 transition-all duration-500 ease-in-out ${
                     isAnimating ? (isLogin ? 'translate-x-full' : '-translate-x-full') : ''
                 } ${isLogin ? 'order-last' : 'order-first'} `}
             >
-
+                <LogoGif></LogoGif>
             </div>
 
             <div
-                className="w-[55%] flex flex-col justify-center items-center bg-[#E6F1E8] transition-all duration-500 ease-in-out">
+                className="w-[60%] flex flex-col justify-center items-center bg-[#E6F1E8] transition-all duration-500 ease-in-out">
                 {!isLogin ? (
                     <Registration onToggleForm={toggleForm} />
                 ) : (
