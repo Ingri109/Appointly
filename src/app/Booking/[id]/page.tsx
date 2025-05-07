@@ -1,17 +1,17 @@
 // app/Booking/[id]/page.tsx
 'use client';
 
-import {useEffect, useState} from 'react';
-import {useRouter} from 'next/navigation';
-import Menu from "@/components/Menu";
-import Stars from "@/components/Stars";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Menu from '@/components/Menu';
+import Stars from '@/components/Stars';
 
 // Тип для моделі працівника
 type Worker = {
     id: string;
     fullName: string;
     email: string;
-    phonenamber: string; // Збережено оригінальне написання з вашого коду
+    phonenamber: string;
     category: string;
     description: string;
     url: string;
@@ -26,7 +26,11 @@ type FetchState = {
     data: Worker | null;
 };
 
-export default function WorkerPage({params}: { params: { id: string } }) {
+export default function WorkerPage({
+                                       params,
+                                   }: {
+    params: { id: string };
+}) {
     const router = useRouter();
     const [state, setState] = useState<FetchState>({
         loading: true,
@@ -35,84 +39,65 @@ export default function WorkerPage({params}: { params: { id: string } }) {
     });
     const [workerId, setWorkerId] = useState<string | null>(null);
 
-    // Спочатку отримуємо ID (асинхронно)
+    // Отримуємо ID з params
     useEffect(() => {
         async function resolveParams() {
             try {
-                // Чекаємо на розв'язання params
-                const resolvedParams = await params;
-                if (resolvedParams && resolvedParams.id) {
-                    setWorkerId(resolvedParams.id);
-                } else {
-                    setState(prev => ({...prev, loading: false, error: 'Worker ID is missing'}));
-                }
-            } catch (err) {
-                console.error('Error resolving params:', err);
-                setState(prev => ({...prev, loading: false, error: 'Error getting worker ID'}));
-            }
-        }
-
-        resolveParams();
-    }, [params]); // Залежність тільки від самого params об'єкта
-
-    // Другий useEffect для отримання даних після отримання ID
-    useEffect(() => {
-        // Якщо ID ще не отримано, не робимо нічого
-        if (!workerId) return;
-
-        const fetchWorkerData = async () => {
-            try {
-                console.log('Fetching worker with ID:', workerId);
-
-                // Виконуємо запит до API
-                const res = await fetch(`/api/workers/${workerId}`);
-                console.log('API response status:', res.status);
-
-                // Отримуємо дані
-                const data = await res.json();
-                console.log('API response data:', data);
-
-                if (!res.ok) {
-                    // Якщо статус відповіді не OK, обробляємо помилку
-                    setState(prev => ({
-                        ...prev,
+                const resolved = await params;
+                if (resolved?.id) setWorkerId(resolved.id);
+                else
+                    setState((p) => ({
+                        ...p,
                         loading: false,
-                        error: data.error || `Failed to fetch worker data (${res.status})`
+                        error: 'Worker ID is missing',
                     }));
-                    return;
-                }
-
-                // Встановлюємо отримані дані
-                setState({
-                    loading: false,
-                    error: null,
-                    data: data,
-                });
             } catch (err) {
-                console.error('Error fetching worker data:', err);
-                setState(prev => ({
-                    ...prev,
+                console.error(err);
+                setState((p) => ({
+                    ...p,
                     loading: false,
-                    error: 'An unexpected error occurred while fetching data',
+                    error: 'Error getting worker ID',
                 }));
             }
-        };
+        }
+        resolveParams();
+    }, [params]);
 
-        fetchWorkerData();
-    }, [workerId]); // Залежність від workerId
+    // Фетчимо дані працівника
+    useEffect(() => {
+        if (!workerId) return;
+        (async () => {
+            try {
+                const res = await fetch(`/api/workers/${workerId}`);
+                const data = await res.json();
+                if (!res.ok) {
+                    setState((p) => ({
+                        ...p,
+                        loading: false,
+                        error: data.error || `Fetch failed (${res.status})`,
+                    }));
+                } else {
+                    setState({ loading: false, error: null, data });
+                }
+            } catch (err) {
+                console.error(err);
+                setState((p) => ({
+                    ...p,
+                    loading: false,
+                    error: 'Unexpected error fetching data',
+                }));
+            }
+        })();
+    }, [workerId]);
 
-    // Відображення під час завантаження
     if (state.loading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
-                <div className="text-center">
-                    <p className="text-lg">Loading worker data...</p>
-                </div>
+                <p className="text-lg">Loading worker data...</p>
             </div>
         );
     }
 
-    // Відображення помилки
     if (state.error) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -134,54 +119,122 @@ export default function WorkerPage({params}: { params: { id: string } }) {
 
     return (
         <main className="flex">
-            <Menu/>
+            <Menu />
             <section className="flex-1 px-5 py-6">
-                <div className="col-span-3 bg-white rounded-lg shadow-[0px_0px_12px_4px_rgba(0,0,0,0.30)] p-6">
-                    <div className="flex flex-col">
-                        <div className="flex items-start mb-8">
-                            <div className="flex flex-col items-center">
-                                <div className="w-50 h-50 bg-gray-500 rounded-full mb-2"></div>
-                            </div>
-                            <div className="ml-10 flex-1">
-                                <div className="flex justify-between items-center mb-4">
-                                        <h2 className="text-3xl font-bold text-custom5">{worker.fullName}</h2>
-                                </div>
-
-                                <div className="flex flex-row justify-start items-center mb-4">
-                                    <p className="text-custom3 font-semibold text-lg">E-mail:</p>
-                                    <p className="text-lg font-semibold text-custom5 ml-3">{worker.email}</p>
-                                </div>
-                                <div className="flex flex-row justify-start items-center mb-4">
-                                    <p className="text-custom3 font-semibold text-lg">Location:</p>
-                                    <p className="text-lg font-semibold text-custom5 ml-3">{worker.location}</p>
-                                </div>
-                                <div className="flex flex-row justify-start items-center mb-4">
-                                    <p className="text-custom3 font-semibold text-lg">Category:</p>
-                                    <p className="text-lg font-semibold text-custom5 ml-3">{worker.category}</p>
-                                </div>
-                                <div className={"flex flex-row justify-start items-center space-x-2"}>
-                                    <span className={'text-[20px] text-custom5 font-bold'}>5.0</span>
-                                    <Stars stylesStar={'w-7 h-7'}/>
+                <div className="bg-white rounded-lg shadow-lg p-6">
+                    {/* — Worker Info — */}
+                    <div className="flex items-start mb-8">
+                        <div className="w-24 h-24 bg-gray-300 rounded-full" />
+                        <div className="ml-8 flex-1">
+                            <h2 className="text-3xl font-bold text-custom5">
+                                {worker.fullName}
+                            </h2>
+                            <div className="mt-4 space-y-2">
+                                <p>
+                                    <span className="font-semibold text-custom3">E-mail: </span>
+                                    <span className="font-semibold text-custom5">
+                    {worker.email}
+                  </span>
+                                </p>
+                                <p>
+                                    <span className="font-semibold text-custom3">Location: </span>
+                                    <span className="font-semibold text-custom5">
+                    {worker.location}
+                  </span>
+                                </p>
+                                <p>
+                                    <span className="font-semibold text-custom3">Category: </span>
+                                    <span className="font-semibold text-custom5">
+                    {worker.category}
+                  </span>
+                                </p>
+                                <div className="flex items-center space-x-2">
+                                    <span className="text-xl font-bold text-custom5">5.0</span>
+                                    <Stars stylesStar="w-6 h-6" />
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div className="flex flex-col justify-start items-center border-t border-b border-black py-4 mb-4">
-                            <h2 className={'text-4xl font-semibold text-custom2'}>Opis</h2>
-                            <p className={'text-[16px] font-semibold text-custom5 mt-2'}>{worker.description}</p>
-                        </div>
-                        <div className='flex flex-row justify-start items-center mx-2'>
-                            <div className=''>
-                                <h3></h3>
-                            </div>
+                    <div className="border-t border-b border-black py-4 mb-6 text-center">
+                        <h3 className="text-4xl font-semibold text-custom2">Opis</h3>
+                        <p className="mt-2 text-custom5 font-semibold">
+                            {worker.description}
+                        </p>
+                    </div>
 
+
+                    <div className="flex flex-col lg:flex-row gap-8 w-full lg:w-1/1">
+                        {/* Schedule table */}
+                        <div className="flex-1 bg-[#E8F5F2] p-4 rounded-2xl border-4 border-[#004D5A]">
+                            <h4 className="text-3xl font-bold text-[#003237] mb-4 text-center">
+                                Dni i godziny pracy
+                            </h4>
+                            <table className="w-full border-separate border-spacing-y-2">
+                                <tbody>
+                                {[
+                                    ['Poniedziałek', '08:00 - 16:00'],
+                                    ['Wtorek', '08:00 - 16:00'],
+                                    ['Środa', '08:00 - 16:00'],
+                                    ['Czwartek', '08:00 - 16:00'],
+                                    ['Piątek', '08:00 - 16:00'],
+                                    ['Sobota', 'Nie pracujemy'],
+                                    ['Niedziela', 'Nie pracujemy'],
+                                ].map(([day, hours]) => (
+                                    <tr
+                                        key={day}
+                                        className="bg-white rounded-lg overflow-hidden"
+                                    >
+                                        <td className="px-4 py-3 text-xl font-medium text-[#004D5A]">
+                                            {day}
+                                        </td>
+                                        <td className="px-4 py-3 text-xl font-semibold text-[#2AA79B] text-right">
+                                            {hours}
+                                        </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
                         </div>
+
+                        {/* Date-picker form */}
+                        <form className="w-full lg:w-1/3 bg-white p-6 rounded-xl shadow-md">
+                            <label
+                                htmlFor="visit-date"
+                                className="block mb-2 text-lg font-semibold text-[#004D5A]"
+                            >
+                                Wybierz datę wizyty:
+                            </label>
+                            <input
+                                type="date"
+                                id="visit-date"
+                                name="visitDate"
+                                className="w-full p-2 border border-gray-300 rounded mb-4"
+                            />
+                            <button
+                                type="submit"
+                                className="bg-[#00545E] hover:bg-[#2D7C88] text-custom1 text-lg font-semibold py-2 px-10 rounded-xl mt-3 hover:scale-105 transition"
+                            >
+                                Zarezerwuj termin
+                            </button>
+                        </form>
+                    </div>
+
+                    {/* “Appointment” button  */}
+                    <div className="mt-8 text-right">
+                        <button className="bg-[#00545E] hover:bg-[#2D7C88] text-custom1 text-lg font-semibold py-2 px-10 rounded-xl mt-2 hover:scale-105 transition">
+                            Appointment
+                        </button>
                     </div>
                 </div>
 
-                <footer className="text-center text-sm text-custom3.2 mt-4">
-                    Since 2025© Creators: Pavlo Satsyk & Orest Muzyka<br/>
-                    <a href="mailto:Appointly.support.team@gmail.com" className="underline hover:text-custom3.1">
+                <footer className="text-center text-sm text-custom3.2 mt-8">
+                    Since 2025© Creators: Pavlo Satsyk & Orest Muzyka
+                    <br />
+                    <a
+                        href="mailto:Appointly.support.team@gmail.com"
+                        className="underline hover:text-custom3.1"
+                    >
                         Appointly.support.team@gmail.com
                     </a>
                 </footer>
