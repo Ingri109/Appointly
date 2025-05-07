@@ -1,58 +1,89 @@
 // app/api/users/route.ts
 import { createClient } from '@supabase/supabase-js';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
 
-interface ProfileData {
-    full_name?: string;
-    email?: string;
-    country?: string;
-    city?: string;
-    street?: string;
-    zip_code?: string;
-}
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+export async function GET() {
+    const session = await getServerSession();
 
-// Helper to init Supabase
-async function initSupabase() {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-    return createClient(supabaseUrl, supabaseKey, {
-        auth: { persistSession: false },
-    });
-}
-
-export async function GET(req: NextRequest) {
-    const supabase = await initSupabase();
-    const { data: { session }, error: sessErr } = await supabase.auth.getSession();
-    if (sessErr || !session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-    const url = new URL(req.url);
-    const id  = url.searchParams.get('id') || session.user.id;
+    if (!session || !session.user?.email) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const { data, error } = await supabase
         .from('users')
-        .select('full_name,email,country,city,street,zip_code')
-        .eq('id', id)
+        .select('*')
+        .eq('email', session.user.email)
         .single();
 
-    if (error) return NextResponse.json({ error: 'Failed to fetch user data' }, { status: 500 });
-    return NextResponse.json(data);
+    console.log(data)
+    if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ user: data });
 }
 
-export async function PUT(req: NextRequest) {
-    const supabase = await initSupabase();
-    const { data: { session }, error: sessErr } = await supabase.auth.getSession();
-    if (sessErr || !session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+export async function PUT(request: Request) {
+    try {
+        const session = await getServerSession();
 
-    const updates: ProfileData = await req.json();
-    const userId = session.user.id;
+        if (!session || !session.user?.email) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
 
-    const { data, error } = await supabase
-        .from('users')
-        .update(updates)
-        .eq('id', userId)
-        .select('full_name,email,country,city,street,zip_code')
-        .single();
+        const body = await request.json();
 
-    if (error) return NextResponse.json({ error: 'Failed to update user data' }, { status: 500 });
-    return NextResponse.json(data);
+        // Check if we're updating a password
+        if (body.password) {
+            // In a real application, you'd hash the password here
+            const { data, error } = await supabase
+                .from('users')
+                .update({ password: body.password })
+                .eq('email', session.user.email)
+                .select()
+                .single();
+
+            if (error) {
+                console.error('Error updating password:', error);
+                return NextResponse.json({ error: error.message }, { status: 500 });
+            }
+
+            // Don't return the password in the response
+            return NextResponse.json({
+                message: 'Password updated successfully',
+                user: { ...data, password: undefined }
+            });
+        }
+
+        // Handle other updates (name, email, address)
+        const { data, error } = await supabase
+            .from('users')
+            .update(body)
+            .eq('email', session.user.email)
+            .select()
+            .single();
+
+        if (error) {
+            console.error('Error updating user:', error);
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+
+        if (!data) {
+            return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        }
+
+        // Return the updated user data
+        return NextResponse.json({
+            message: 'User updated successfully',
+            user: { ...data, password: undefined }
+        });
+    } catch (err) {
+        console.error('Unexpected error:', err);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
 }
