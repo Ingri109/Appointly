@@ -1,0 +1,23 @@
+
+services:
+  client:
+    container_name: appointly-client 
+    image: appointly-client:${VERSION}
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    restart: always
+
+  server:
+    container_name: appointly-server
+    image: appointly-client:${VERSION}
+    build:
+      context: ./server 
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    restart: always
+    environment:
+      DATABASE_URL: "postgresql://postgres.mesdgkietrlreqikzkiu:mko0_PL<.;[=@aws-1-eu-north-1.pooler.supabase.com:5432/postgres"

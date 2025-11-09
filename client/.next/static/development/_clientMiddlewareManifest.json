@@ -1,0 +1,22 @@
+[
+  {
+    "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?(?:\\/(\\/?index|\\/?index\\\\.json))?[\\/#\\?]?$",
+    "originalSource": "/"
+  },
+  {
+    "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/Login(\\\\.json)?[\\/#\\?]?$",
+    "originalSource": "/Login"
+  },
+  {
+    "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/Account(\\\\.json)?[\\/#\\?]?$",
+    "originalSource": "/Account"
+  },
+  {
+    "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/Visits(\\\\.json)?[\\/#\\?]?$",
+    "originalSource": "/Visits"
+  },
+  {
+    "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/Booking(\\\\.json)?[\\/#\\?]?$",
+    "originalSource": "/Booking"
+  }
+]
