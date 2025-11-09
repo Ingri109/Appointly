@@ -1,0 +1,16 @@
+# Dependencies folder
+node_modules
+
+# Build folder
+.next
+
+# Docker files
+Dockerfile
+.dockerignore
+
+# Local environment variables 
+.env.local
+
+# System files
+.git
+README.md
