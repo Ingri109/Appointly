@@ -2,6 +2,54 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AuthResponse {
+  accessToken: String!
+  user: User!
+}
+
+input CreateUserInput {
+  dateOfBirth: String
+  email: String!
+  name: String!
+  password: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  login(loginInput: LoginInput!): AuthResponse!
+  logout(userId: String!): Boolean!
+  register(registerInput: RegisterInput!): AuthResponse!
+  registerUser(createUserInput: CreateUserInput!): User!
+  removeUser(id: String!): Boolean!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+}
+
 type Query {
-  hello: String!
+  user(email: String!): User!
+  users: [User!]!
+}
+
+input RegisterInput {
+  email: String!
+  name: String!
+  password: String!
+}
+
+input UpdateUserInput {
+  dateOfBirth: String
+  email: String
+  id: String!
+  name: String
+  password: String
+}
+
+type User {
+  dateOfBirth: String
+  email: String!
+  id: String!
+  name: String!
 }
