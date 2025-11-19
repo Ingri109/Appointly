@@ -1,6 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-client/node_modules
+# Dependencies
+node_modules/
+client/node_modules/
 server/node_modules/
 /.pnp
 .pnp.*
@@ -10,36 +12,38 @@ server/node_modules/
 !.yarn/releases
 !.yarn/versions
 
-# testing
+# Testing
 /coverage
 
-# next.js
+# Next.js
 /.next/
 /out/
 
-# production
+# Production
 /build
+/dist
 
-# misc
+# Misc
 .DS_Store
 *.pem
 
-# debug
+# Debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-<<<<<<< HEAD
-.env*
-=======
-.env.local
->>>>>>> feature/Docker
+# --- ENV FILES (SECRETS) ---
+# Ігноруємо всі файли, що починаються на .env
+.env
+.env.*
 
-# vercel
+# Але! Залишаємо .env.example, щоб інші розробники знали, які змінні треба створити
+!.env.example
+
+# Vercel
 .vercel
 
-# typescript
+# Typescript
 *.tsbuildinfo
 next-env.d.ts
