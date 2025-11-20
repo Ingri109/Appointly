@@ -24,9 +24,6 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ default: true })
-  isActive: boolean;
-
   @Field(() => String, { nullable: true })
   @Column({ type: 'date', nullable: true })
   dateOfBirth?: string | null;

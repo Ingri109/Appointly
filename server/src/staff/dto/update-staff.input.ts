@@ -1,6 +1,8 @@
 import { CreateStaffInput } from './create-staff.input';
-import { PartialType } from '@nestjs/mapped-types';
+import { InputType, Field, PartialType } from '@nestjs/graphql';
 
+@InputType()
 export class UpdateStaffInput extends PartialType(CreateStaffInput) {
-  id: number;
+  @Field(() => String)
+  id: string;
 }
