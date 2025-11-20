@@ -7,6 +7,15 @@ type AuthResponse {
   user: User!
 }
 
+input CreateStaffInput {
+  dateOfBirth: String
+  email: String!
+  fullName: String!
+  password: String!
+  roomNumber: Int!
+  specialty: String
+}
+
 input CreateUserInput {
   dateOfBirth: String
   email: String!
@@ -19,16 +28,29 @@ input LoginInput {
   password: String!
 }
 
+input LoginStaffInput {
+  id: String!
+  password: String!
+}
+
 type Mutation {
+  createStaff(createStaffInput: CreateStaffInput!): Staff!
   login(loginInput: LoginInput!): AuthResponse!
+  loginStaff(loginStaffInput: LoginStaffInput!): StaffAuthResponse!
   logout(userId: String!): Boolean!
+  logoutStaff(staffId: String!): Boolean!
   register(registerInput: RegisterInput!): AuthResponse!
+  registerStaff(createStaffInput: CreateStaffInput!): StaffAuthResponse!
   registerUser(createUserInput: CreateUserInput!): User!
+  removeStaff(id: String!): Boolean!
   removeUser(id: String!): Boolean!
+  updateStaff(updateStaffInput: UpdateStaffInput!): Staff!
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Query {
+  allStaff: [Staff!]!
+  staffMember(id: String!): Staff!
   user(email: String!): User!
   users: [User!]!
 }
@@ -37,6 +59,30 @@ input RegisterInput {
   email: String!
   name: String!
   password: String!
+}
+
+type Staff {
+  dateOfBirth: String
+  email: String!
+  fullName: String!
+  id: String!
+  roomNumber: Int!
+  specialty: String!
+}
+
+type StaffAuthResponse {
+  accessToken: String!
+  user: Staff!
+}
+
+input UpdateStaffInput {
+  dateOfBirth: String
+  email: String
+  fullName: String
+  id: String!
+  password: String
+  roomNumber: Int
+  specialty: String
 }
 
 input UpdateUserInput {

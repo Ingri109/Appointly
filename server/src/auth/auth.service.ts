@@ -6,12 +6,16 @@ import {
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { StaffService } from '../staff/staff.service';
 import { RegisterInput, LoginInput } from './dto/auth.dto';
+import { CreateStaffInput } from '../staff/dto/create-staff.input';
+import { LoginStaffInput } from '../staff/dto/login-staff.input'
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
+    private staffService: StaffService,
     private jwtService: JwtService,
   ) {}
 
@@ -50,6 +54,41 @@ export class AuthService {
     return { ...tokens, user };
   }
 
+  async logout(userId: string) {
+    await this.userService.updateRefreshToken(userId, null);
+  }
+
+  //<-<-<-<- STAFF ->->->->
+  async registerStaff(input: CreateStaffInput) {
+    const newStaff = await this.staffService.create(input);
+    const tokens = await this.getTokens(newStaff.id, newStaff.email);
+    await this.staffService.updateRefreshToken(newStaff.id, tokens.refreshToken);
+    
+    return { ...tokens, user: newStaff };
+  }
+
+  async loginStaff(input: LoginStaffInput) {
+    const staff = await this.staffService.findOne(input.id);
+    if (!staff) {
+      throw new UnauthorizedException('Працівника з таким ID не знайдено');
+    }
+
+    const isPasswordValid = await bcrypt.compare(input.password, staff.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Невірний пароль');
+    }
+
+    const tokens = await this.getTokens(staff.id, staff.email);
+    await this.staffService.updateRefreshToken(staff.id, tokens.refreshToken);
+
+    return { ...tokens, user: staff };
+  }
+
+  async logoutStaff(staffId: string) {
+    await this.staffService.updateRefreshToken(staffId, null);
+  }
+
+  //---- TOKEN ----
   async getTokens(userId: string, email: string) {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
@@ -68,8 +107,6 @@ export class AuthService {
     await this.userService.updateRefreshToken(userId, refreshToken);
   }
 
-  async logout(userId: string) {
-    await this.userService.updateRefreshToken(userId, null);
-  }
+ 
 
 }
