@@ -16,10 +16,16 @@ const Registration = ({onToggleForm}: RegistrationProps) => {
     const [fullName, setFullName] = useState('');
     const [message, setMessage] = useState('');
     const [showPassword, setShowPassword] = useState(true);
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     const handleRegister = async (e: React.FormEvent) =>{
         e.preventDefault();
         setMessage('Registration...');
+
+        if (confirmPassword !== password) {
+            setMessage('Passwords do not match');
+            return;
+        }
 
         const res = await fetch(`/api/register`, {
             method: 'POST',
@@ -36,7 +42,8 @@ const Registration = ({onToggleForm}: RegistrationProps) => {
             setEmail('');
             setPassword('');
             setFullName('');
-            window.location.replace('/account');
+            setConfirmPassword('');
+            // window.location.replace('/account');
         }
     }
 
@@ -45,11 +52,11 @@ const Registration = ({onToggleForm}: RegistrationProps) => {
     };
     return (
        <>
-           <h1 className="text-5xl font-bold text-custom5 mb-8">Sign in</h1>
+           <h1 className="text-2xl md:text-5xl font-bold text-custom5 mb-4 md:mb-8 text-center">Create your new account</h1>
 
-           <form onSubmit={handleRegister}  className="bg-[#3FA1A9] p-8 rounded-xl shadow-lg flex flex-col items-center gap-4">
-               <div className="flex flex-col w-[280px]">
-                   <label className="text-custom1 font-bold mb-1">Name&Surname</label>
+           <form onSubmit={handleRegister}  className="bg-[#3FA1A9] p-6 md:p-8 rounded-xl shadow-lg flex flex-col items-center gap-4">
+               <div className="flex flex-col w-[300px] md:w-[280px]">
+                   <label className="text-custom1 font-bold mb-1">Name & Surname</label>
                    <input
                        type="text"
                        name="Name&Surname"
@@ -57,11 +64,11 @@ const Registration = ({onToggleForm}: RegistrationProps) => {
                        required
                        onChange={(e) => setFullName(e.target.value)}
                        className="h-[45px] rounded-lg px-4 bg-custom1 border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00545E]"
-                       placeholder="Enter your name & surname"
+                       placeholder="Name & Surname"
                    />
                </div>
 
-               <div className="flex flex-col w-[280px]">
+               <div className="flex flex-col w-[300px] md:w-[280px]">
                    <label className="text-custom1 font-bold mb-1">E-mail</label>
                    <input
                        type="email"
@@ -70,11 +77,11 @@ const Registration = ({onToggleForm}: RegistrationProps) => {
                        required
                        onChange={(e) => setEmail(e.target.value)}
                        className="h-[45px] rounded-lg px-4 bg-custom1 border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00545E]"
-                       placeholder="Enter your E-mail"
+                       placeholder="E-mail"
                    />
                </div>
 
-               <div className="relative flex flex-col w-[280px]">
+               <div className="relative flex flex-col w-[300px] md:w-[280px]">
                    <label className="text-custom1 font-bold mb-1">Password</label>
                    <span onClick={togglePasswordVisibility} className={'absolute top-7 right-0 p-2 cursor-pointer'}>
                         <Image className={'w-8 h-8 '} src={showPassword? EyeOpen : EyeClose} alt={'Open Password'} />
@@ -86,7 +93,20 @@ const Registration = ({onToggleForm}: RegistrationProps) => {
                        required
                        onChange={(e) => setPassword(e.target.value)}
                        className="h-[45px] rounded-lg px-4 bg-custom1 border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00545E]"
-                       placeholder="Enter your password"
+                       placeholder="Password"
+                   />
+               </div>
+
+               <div className="flex flex-col w-[300px] md:w-[280px]">
+                   <label className="text-custom1 font-bold mb-1">Confirm Password</label>
+                   <input
+                       type={showPassword ? 'password' : 'text'}
+                       name="Confirm Password"
+                       autoComplete="on"
+                       required
+                       onChange={(e) => setConfirmPassword(e.target.value)}
+                       className="h-[45px] rounded-lg px-4 bg-custom1 border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00545E]"
+                       placeholder="Confirm Password"
                    />
                </div>
 
@@ -95,14 +115,14 @@ const Registration = ({onToggleForm}: RegistrationProps) => {
                    onClick={onToggleForm}
                    className="text-[14px] hover:text-[#012E40] mt-2 underline"
                >
-                   Already have an account?
+                   Already have an account? Log in
                </button>
 
                <button
                    type="submit"
                    className="bg-[#00545E] hover:bg-[#2D7C88] text-custom1 text-lg font-semibold py-2 px-10 rounded-xl mt-2 hover:scale-105 transition"
                >
-                   Sign In
+                   Sign Up
                </button>
                <label className={'break-words text-center text-custom5 text-[14px] font-semibold mt-1 w-[300px]'}>{message}</label>
            </form>

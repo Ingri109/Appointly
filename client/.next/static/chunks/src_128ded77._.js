@@ -103,8 +103,8 @@ const LogIn = ({ onToggleForm })=>{
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                className: "text-5xl font-bold text-[#003147] mb-8",
-                children: "Log in"
+                className: "text-2xl md:text-5xl font-bold text-[#003147] mb-4 md:mb-8 text-center",
+                children: "Log in to your account"
             }, void 0, false, {
                 fileName: "[project]/src/components/LogIn.tsx",
                 lineNumber: 42,
@@ -112,10 +112,10 @@ const LogIn = ({ onToggleForm })=>{
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
                 onSubmit: handleLogin,
-                className: "bg-[#3FA1A9] p-8 rounded-xl shadow-lg flex flex-col items-center gap-4",
+                className: "bg-[#3FA1A9] p-6 md:p-8 rounded-xl shadow-lg flex flex-col items-center gap-4",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex flex-col w-[280px]",
+                        className: "flex flex-col w-[300px] md:w-[280px]",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                 className: "text-custom1 font-bold mb-1",
@@ -132,7 +132,7 @@ const LogIn = ({ onToggleForm })=>{
                                 autoComplete: "on",
                                 required: true,
                                 className: "h-[45px] rounded-lg px-4 bg-custom1 border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00545E]",
-                                placeholder: "Enter your E-mail"
+                                placeholder: "E-mail"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/LogIn.tsx",
                                 lineNumber: 46,
@@ -145,7 +145,7 @@ const LogIn = ({ onToggleForm })=>{
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "relative flex flex-col w-[280px]",
+                        className: "relative flex flex-col w-[300px] md:w-[280px]",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                 className: "text-custom1 font-bold mb-1",
@@ -179,7 +179,7 @@ const LogIn = ({ onToggleForm })=>{
                                 autoComplete: "on",
                                 required: true,
                                 className: "h-[45px] rounded-lg px-4 bg-custom1 border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00545E]",
-                                placeholder: "Enter your password"
+                                placeholder: "Password"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/LogIn.tsx",
                                 lineNumber: 62,
@@ -195,7 +195,7 @@ const LogIn = ({ onToggleForm })=>{
                         type: "button",
                         onClick: onToggleForm,
                         className: "text-[14px] hover:text-[#012E40] mt-2 underline",
-                        children: "You don`t have an account?"
+                        children: "Don't have an account? Sign up"
                     }, void 0, false, {
                         fileName: "[project]/src/components/LogIn.tsx",
                         lineNumber: 73,
@@ -263,9 +263,14 @@ const Registration = ({ onToggleForm })=>{
     const [fullName, setFullName] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
     const [message, setMessage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
     const [showPassword, setShowPassword] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
+    const [confirmPassword, setConfirmPassword] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
     const handleRegister = async (e)=>{
         e.preventDefault();
         setMessage('Registration...');
+        if (confirmPassword !== password) {
+            setMessage('Passwords do not match');
+            return;
+        }
         const res = await fetch(`/api/register`, {
             method: 'POST',
             headers: {
@@ -285,7 +290,8 @@ const Registration = ({ onToggleForm })=>{
             setEmail('');
             setPassword('');
             setFullName('');
-            window.location.replace('/account');
+            setConfirmPassword('');
+        // window.location.replace('/account');
         }
     };
     const togglePasswordVisibility = ()=>{
@@ -294,26 +300,26 @@ const Registration = ({ onToggleForm })=>{
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                className: "text-5xl font-bold text-custom5 mb-8",
-                children: "Sign in"
+                className: "text-2xl md:text-5xl font-bold text-custom5 mb-4 md:mb-8 text-center",
+                children: "Create your new account"
             }, void 0, false, {
                 fileName: "[project]/src/components/Registration.tsx",
-                lineNumber: 48,
+                lineNumber: 55,
                 columnNumber: 12
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
                 onSubmit: handleRegister,
-                className: "bg-[#3FA1A9] p-8 rounded-xl shadow-lg flex flex-col items-center gap-4",
+                className: "bg-[#3FA1A9] p-6 md:p-8 rounded-xl shadow-lg flex flex-col items-center gap-4",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex flex-col w-[280px]",
+                        className: "flex flex-col w-[300px] md:w-[280px]",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                 className: "text-custom1 font-bold mb-1",
-                                children: "Name&Surname"
+                                children: "Name & Surname"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Registration.tsx",
-                                lineNumber: 52,
+                                lineNumber: 59,
                                 columnNumber: 20
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -323,27 +329,27 @@ const Registration = ({ onToggleForm })=>{
                                 required: true,
                                 onChange: (e)=>setFullName(e.target.value),
                                 className: "h-[45px] rounded-lg px-4 bg-custom1 border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00545E]",
-                                placeholder: "Enter your name & surname"
+                                placeholder: "Name & Surname"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Registration.tsx",
-                                lineNumber: 53,
+                                lineNumber: 60,
                                 columnNumber: 20
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/Registration.tsx",
-                        lineNumber: 51,
+                        lineNumber: 58,
                         columnNumber: 16
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex flex-col w-[280px]",
+                        className: "flex flex-col w-[300px] md:w-[280px]",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                 className: "text-custom1 font-bold mb-1",
                                 children: "E-mail"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Registration.tsx",
-                                lineNumber: 65,
+                                lineNumber: 72,
                                 columnNumber: 20
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -353,27 +359,27 @@ const Registration = ({ onToggleForm })=>{
                                 required: true,
                                 onChange: (e)=>setEmail(e.target.value),
                                 className: "h-[45px] rounded-lg px-4 bg-custom1 border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00545E]",
-                                placeholder: "Enter your E-mail"
+                                placeholder: "E-mail"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Registration.tsx",
-                                lineNumber: 66,
+                                lineNumber: 73,
                                 columnNumber: 20
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/Registration.tsx",
-                        lineNumber: 64,
+                        lineNumber: 71,
                         columnNumber: 16
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "relative flex flex-col w-[280px]",
+                        className: "relative flex flex-col w-[300px] md:w-[280px]",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                 className: "text-custom1 font-bold mb-1",
                                 children: "Password"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Registration.tsx",
-                                lineNumber: 78,
+                                lineNumber: 85,
                                 columnNumber: 20
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -385,12 +391,12 @@ const Registration = ({ onToggleForm })=>{
                                     alt: 'Open Password'
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Registration.tsx",
-                                    lineNumber: 80,
+                                    lineNumber: 87,
                                     columnNumber: 25
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Registration.tsx",
-                                lineNumber: 79,
+                                lineNumber: 86,
                                 columnNumber: 20
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -400,35 +406,65 @@ const Registration = ({ onToggleForm })=>{
                                 required: true,
                                 onChange: (e)=>setPassword(e.target.value),
                                 className: "h-[45px] rounded-lg px-4 bg-custom1 border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00545E]",
-                                placeholder: "Enter your password"
+                                placeholder: "Password"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Registration.tsx",
-                                lineNumber: 82,
+                                lineNumber: 89,
                                 columnNumber: 20
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/Registration.tsx",
-                        lineNumber: 77,
+                        lineNumber: 84,
+                        columnNumber: 16
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "flex flex-col w-[300px] md:w-[280px]",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                className: "text-custom1 font-bold mb-1",
+                                children: "Confirm Password"
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/Registration.tsx",
+                                lineNumber: 101,
+                                columnNumber: 20
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                type: showPassword ? 'password' : 'text',
+                                name: "Confirm Password",
+                                autoComplete: "on",
+                                required: true,
+                                onChange: (e)=>setConfirmPassword(e.target.value),
+                                className: "h-[45px] rounded-lg px-4 bg-custom1 border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00545E]",
+                                placeholder: "Confirm Password"
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/Registration.tsx",
+                                lineNumber: 102,
+                                columnNumber: 20
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/components/Registration.tsx",
+                        lineNumber: 100,
                         columnNumber: 16
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                         type: "button",
                         onClick: onToggleForm,
                         className: "text-[14px] hover:text-[#012E40] mt-2 underline",
-                        children: "Already have an account?"
+                        children: "Already have an account? Log in"
                     }, void 0, false, {
                         fileName: "[project]/src/components/Registration.tsx",
-                        lineNumber: 93,
+                        lineNumber: 113,
                         columnNumber: 16
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                         type: "submit",
                         className: "bg-[#00545E] hover:bg-[#2D7C88] text-custom1 text-lg font-semibold py-2 px-10 rounded-xl mt-2 hover:scale-105 transition",
-                        children: "Sign In"
+                        children: "Sign Up"
                     }, void 0, false, {
                         fileName: "[project]/src/components/Registration.tsx",
-                        lineNumber: 101,
+                        lineNumber: 121,
                         columnNumber: 16
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
@@ -436,19 +472,19 @@ const Registration = ({ onToggleForm })=>{
                         children: message
                     }, void 0, false, {
                         fileName: "[project]/src/components/Registration.tsx",
-                        lineNumber: 107,
+                        lineNumber: 127,
                         columnNumber: 16
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/Registration.tsx",
-                lineNumber: 50,
+                lineNumber: 57,
                 columnNumber: 12
             }, this)
         ]
     }, void 0, true);
 };
-_s(Registration, "Rkjvsrlecq2Lwol/xb7o/zgRD0s=");
+_s(Registration, "VPwSkW0FqzfFt2AzZ/7uOgdKZyo=");
 _c = Registration;
 const __TURBOPACK__default__export__ = Registration;
 var _c;
@@ -548,44 +584,44 @@ const LoginPage = ()=>{
         }, 500);
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-        className: "min-h-screen flex overflow-hidden",
+        className: "min-h-screen flex flex-col md:flex-row overflow-hidden bg-[#E6F1E8]",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: `w-[40%] h-screen bg-custom5 transition-all duration-500 ease-in-out ${isAnimating ? isLogin ? 'translate-x-full' : '-translate-x-full' : ''} ${isLogin ? 'order-last' : 'order-first'} `,
+                className: `hidden md:block md:w-[40%] h-[240px] md:h-screen bg-custom5 transition-all duration-500 ease-in-out ${isAnimating ? isLogin ? 'translate-x-full' : '-translate-x-full' : ''} ${isLogin ? 'order-last' : 'order-first'} `,
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$LogoGif$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/src/app/Login/page.tsx",
-                    lineNumber: 29,
+                    lineNumber: 30,
                     columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/Login/page.tsx",
-                lineNumber: 24,
+                lineNumber: 25,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "w-[60%] flex flex-col justify-center items-center bg-[#E6F1E8] transition-all duration-500 ease-in-out",
+                className: "w-full md:w-[60%] flex flex-col justify-center items-center px-4 py-8 md:px-0 md:py-0 transition-all duration-500 ease-in-out",
                 children: [
                     !isLogin ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$Registration$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                         onToggleForm: toggleForm
                     }, void 0, false, {
                         fileName: "[project]/src/app/Login/page.tsx",
-                        lineNumber: 35,
+                        lineNumber: 36,
                         columnNumber: 21
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$LogIn$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                         onToggleForm: toggleForm
                     }, void 0, false, {
                         fileName: "[project]/src/app/Login/page.tsx",
-                        lineNumber: 37,
+                        lineNumber: 38,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("footer", {
-                        className: "text-center text-sm text-[#167A8B] mt-4",
+                        className: "text-center text-sm text-[#167A8B] mt-6",
                         children: [
-                            "Since 2025© Creators: Pavlo Satsyk & Orest Muzyka",
+                            "Od 2025© Twórcy: Pavlo Satsyk & Orest Muzyka",
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                 fileName: "[project]/src/app/Login/page.tsx",
-                                lineNumber: 41,
-                                columnNumber: 70
+                                lineNumber: 42,
+                                columnNumber: 65
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
                                 href: "mailto:Appointly.support.team@gmail.com",
@@ -593,19 +629,19 @@ const LoginPage = ()=>{
                                 children: "Appointly.support.team@gmail.com"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/Login/page.tsx",
-                                lineNumber: 42,
+                                lineNumber: 43,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/Login/page.tsx",
-                        lineNumber: 40,
+                        lineNumber: 41,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/Login/page.tsx",
-                lineNumber: 32,
+                lineNumber: 34,
                 columnNumber: 13
             }, this)
         ]
