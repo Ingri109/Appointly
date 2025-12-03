@@ -19,26 +19,27 @@ const LoginPage = () => {
     };
 
     return (
-        <section className="min-h-screen flex overflow-hidden">
+        <section className="min-h-screen flex flex-col md:flex-row overflow-hidden bg-[#E6F1E8]">
 
+            {/* Left visual panel: hidden on mobile, shows on md+ */}
             <div
-                className={`w-[40%] h-screen bg-custom5 transition-all duration-500 ease-in-out ${
+                className={`hidden md:block md:w-[40%] h-[240px] md:h-screen bg-custom5 transition-all duration-500 ease-in-out ${
                     isAnimating ? (isLogin ? 'translate-x-full' : '-translate-x-full') : ''
                 } ${isLogin ? 'order-last' : 'order-first'} `}
             >
-                <LogoGif></LogoGif>
+                <LogoGif />
             </div>
 
-            <div
-                className="w-[60%] flex flex-col justify-center items-center bg-[#E6F1E8] transition-all duration-500 ease-in-out">
+            {/* Form panel: full width on mobile, 60% on desktop */}
+            <div className="w-full md:w-[60%] flex flex-col justify-center items-center px-4 py-8 md:px-0 md:py-0 transition-all duration-500 ease-in-out">
                 {!isLogin ? (
                     <Registration onToggleForm={toggleForm} />
                 ) : (
                     <LogIn onToggleForm={toggleForm} />
                 )}
 
-                <footer className="text-center text-sm text-[#167A8B] mt-4">
-                    Since 2025© Creators: Pavlo Satsyk & Orest Muzyka<br/>
+                <footer className="text-center text-sm text-[#167A8B] mt-6">
+                    Od 2025© Twórcy: Pavlo Satsyk & Orest Muzyka<br/>
                     <a href="mailto:Appointly.support.team@gmail.com" className="underline hover:text-[#00545E]">
                         Appointly.support.team@gmail.com
                     </a>

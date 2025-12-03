@@ -338,7 +338,7 @@ const Account: React.FC = () => {
                 <section className="flex-1 flex items-center justify-center">
                     <div className="text-center">
                         <div className="w-12 h-12 border-4 border-[#3CA6A6] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                        <p>Loading user data...</p>
+                        <p>Ładowanie danych użytkownika...</p>
                     </div>
                 </section>
             </main>
@@ -351,12 +351,12 @@ const Account: React.FC = () => {
                 <Menu />
                 <section className="flex-1 flex items-center justify-center">
                     <div className="text-center">
-                        <p className="text-red-500 mb-4">Error loading user data: {error}</p>
+                        <p className="text-red-500 mb-4">Błąd ładowania danych użytkownika: {error}</p>
                         <button
                             onClick={() => window.location.reload()}
                             className="px-4 py-2 bg-[#003049] text-white rounded-lg hover:scale-105 transition"
                         >
-                            Try Again
+                            Spróbuj Ponownie
                         </button>
                     </div>
                 </section>
@@ -411,13 +411,13 @@ const Account: React.FC = () => {
                                                         onClick={handleCancelEdit}
                                                         className="px-3 py-1 bg-gray-300 text-gray-700 rounded"
                                                     >
-                                                        Cancel
+                                                        Anuluj
                                                     </button>
                                                     <button
                                                         type="submit"
                                                         className="px-3 py-1 bg-[#003049] text-white rounded"
                                                     >
-                                                        Apply Change
+                                                        Zastosuj Zmiany
                                                     </button>
                                                 </div>
                                             </form>
@@ -462,13 +462,13 @@ const Account: React.FC = () => {
                                                         onClick={handleCancelEdit}
                                                         className="px-3 py-1 bg-gray-300 text-gray-700 rounded"
                                                     >
-                                                        Cancel
+                                                        Anuluj
                                                     </button>
                                                     <button
                                                         type="submit"
                                                         className="px-3 py-1 bg-[#003049] text-white rounded"
                                                     >
-                                                        Apply Change
+                                                        Zastosuj Zmiany
                                                     </button>
                                                 </div>
                                             </form>
@@ -499,7 +499,7 @@ const Account: React.FC = () => {
                                                     value={passwordInput}
                                                     onChange={(e) => setPasswordInput(e.target.value)}
                                                     className="w-full p-2 border border-gray-300 rounded mb-2"
-                                                    placeholder="Enter new password"
+                                                    placeholder="Wprowadź nowe hasło"
                                                     required
                                                 />
                                                 <input
@@ -507,7 +507,7 @@ const Account: React.FC = () => {
                                                     value={confirmPasswordInput}
                                                     onChange={(e) => setConfirmPasswordInput(e.target.value)}
                                                     className="w-full p-2 border border-gray-300 rounded mb-2"
-                                                    placeholder="Confirm new password"
+                                                    placeholder="Potwierdź nowe hasło"
                                                     required
                                                 />
                                                 {updateStatus && (
@@ -521,13 +521,13 @@ const Account: React.FC = () => {
                                                         onClick={handleCancelEdit}
                                                         className="px-3 py-1 bg-gray-300 text-gray-700 rounded"
                                                     >
-                                                        Cancel
+                                                        Anuluj
                                                     </button>
                                                     <button
                                                         type="submit"
                                                         className="px-3 py-1 bg-[#003049] text-white rounded"
                                                     >
-                                                        Apply Change
+                                                        Zastosuj Zmiany
                                                     </button>
                                                 </div>
                                             </form>
@@ -549,28 +549,28 @@ const Account: React.FC = () => {
 
                         {/* Address Section */}
                         <div>
-                            <h3 className="text-[#264653] font-bold text-3xl mb-3">Address</h3>
+                            <h3 className="text-[#264653] font-bold text-3xl mb-3">Adres</h3>
                             <div className="border-t border-b border-black py-4 mb-4">
                                 {activeEditSection !== 'address' ? (
                                     <>
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="flex items-center">
-                                                <p className="text-[#264653] font-semibold text-xl mr-2">Country:</p>
+                                                <p className="text-[#264653] font-semibold text-xl mr-2">Kraj:</p>
                                                 <p className="text-lg font-semibold text-[#003049]">{userData.country || "-"}</p>
                                             </div>
 
                                             <div className="flex items-center">
-                                                <p className="text-[#264653] font-semibold text-xl mr-2">City:</p>
+                                                <p className="text-[#264653] font-semibold text-xl mr-2">Miasto:</p>
                                                 <p className="text-lg font-semibold text-[#003049]">{userData.city || "-"}</p>
                                             </div>
 
                                             <div className="flex items-center">
-                                                <p className="text-[#264653] font-semibold text-xl mr-2">Street:</p>
+                                                <p className="text-[#264653] font-semibold text-xl mr-2">Ulica:</p>
                                                 <p className="text-lg font-semibold text-[#003049]">{userData.street || "-"}</p>
                                             </div>
 
                                             <div className="flex items-center">
-                                                <p className="text-[#264653] font-semibold text-xl mr-2">Zip-code:</p>
+                                                <p className="text-[#264653] font-semibold text-xl mr-2">Kod pocztowy:</p>
                                                 <p className="text-lg font-semibold text-[#003049]">{userData.zip_code || "-"}</p>
                                             </div>
                                         </div>
@@ -589,46 +589,46 @@ const Account: React.FC = () => {
                                     <form onSubmit={handleUpdateAddress} className="w-full">
                                         <div className="grid grid-cols-2 gap-4 mb-4">
                                             <div>
-                                                <label className="text-[#264653] font-semibold block mb-1">Country:</label>
+                                                <label className="text-[#264653] font-semibold block mb-1">Kraj:</label>
                                                 <input
                                                     type="text"
                                                     value={addressInputs.country}
                                                     onChange={(e) => setAddressInputs({...addressInputs, country: e.target.value})}
                                                     className="w-full p-2 border border-gray-300 rounded"
-                                                    placeholder={userData.country || "Enter country"}
+                                                    placeholder={userData.country || "Wprowadź kraj"}
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="text-[#264653] font-semibold block mb-1">City:</label>
+                                                <label className="text-[#264653] font-semibold block mb-1">Miasto:</label>
                                                 <input
                                                     type="text"
                                                     value={addressInputs.city}
                                                     onChange={(e) => setAddressInputs({...addressInputs, city: e.target.value})}
                                                     className="w-full p-2 border border-gray-300 rounded"
-                                                    placeholder={userData.city || "Enter city"}
+                                                    placeholder={userData.city || "Wprowadź miasto"}
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="text-[#264653] font-semibold block mb-1">Street:</label>
+                                                <label className="text-[#264653] font-semibold block mb-1">Ulica:</label>
                                                 <input
                                                     type="text"
                                                     value={addressInputs.street}
                                                     onChange={(e) => setAddressInputs({...addressInputs, street: e.target.value})}
                                                     className="w-full p-2 border border-gray-300 rounded"
-                                                    placeholder={userData.street || "Enter street"}
+                                                    placeholder={userData.street || "Wprowadź ulicę"}
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="text-[#264653] font-semibold block mb-1">Zip-code:</label>
+                                                <label className="text-[#264653] font-semibold block mb-1">Kod pocztowy:</label>
                                                 <input
                                                     type="text"
                                                     value={addressInputs.zip_code}
                                                     onChange={(e) => setAddressInputs({...addressInputs, zip_code: e.target.value})}
                                                     className="w-full p-2 border border-gray-300 rounded"
-                                                    placeholder={userData.zip_code || "Enter zip code"}
+                                                    placeholder={userData.zip_code || "Wprowadź kod pocztowy"}
                                                 />
                                             </div>
                                         </div>
@@ -645,13 +645,13 @@ const Account: React.FC = () => {
                                                 onClick={handleCancelEdit}
                                                 className="px-3 py-1 bg-gray-300 text-gray-700 rounded"
                                             >
-                                                Cancel
+                                                Anuluj
                                             </button>
                                             <button
                                                 type="submit"
                                                 className="px-3 py-1 bg-[#003049] text-white rounded"
                                             >
-                                                Apply Change
+                                                Zastosuj Zmiany
                                             </button>
                                         </div>
                                     </form>
@@ -672,7 +672,7 @@ const Account: React.FC = () => {
                 </div>
 
                 <footer className="text-center text-sm text-[#264653] mt-4">
-                    Since 2025© Creators: Pavlo Satsyk & Orest Muzyka<br />
+                    Od 2025© Twórcy: Pavlo Satsyk & Orest Muzyka<br />
                     <a href="mailto:Appointly.support.team@gmail.com" className="underline hover:text-[#3CA6A6]">
                         Appointly.support.team@gmail.com
                     </a>

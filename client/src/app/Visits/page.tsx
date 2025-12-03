@@ -46,7 +46,7 @@ const VisitsPage = () => {
                 <section className="flex-1 flex items-center justify-center">
                     <div className="text-center">
                         <div className="w-12 h-12 border-4 border-[#3CA6A6] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                        <p>Loading user data...</p>
+                        <p>Ładowanie danych użytkownika...</p>
                     </div>
                 </section>
             </main>
@@ -58,7 +58,7 @@ const VisitsPage = () => {
             <Menu />
             <section className="flex-1 flex items-center justify-center">
                 <div className="text-center">
-                    <p>Not fount appointments</p>
+                    <p>Nie znaleziono wizyt</p>
                 </div>
             </section>
         </main>
