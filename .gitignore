@@ -18,6 +18,9 @@ server/node_modules/
 # Next.js
 /.next/
 /out/
+client/.next/
+/out/
+next-env.d.ts
 
 # Production
 /build
