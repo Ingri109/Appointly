@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 6, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
-    {"offset": {"line": 108, "column": 0}, "map": {"version":3,"sources":["file://C%3A/Users/feedb/Appointly/client/src/app/api/workers/route.ts"],"sourcesContent":["// /app/api/users/route.ts\r\nimport { NextResponse } from 'next/server';\r\nimport { createClient } from '@supabase/supabase-js';\r\n\r\nconst supabase = createClient(\r\n    process.env.NEXT_PUBLIC_SUPABASE_URL!,\r\n    process.env.SUPABASE_SERVICE_ROLE_KEY!\r\n);\r\n\r\nexport async function GET() {\r\n    const { data, error } = await supabase.from('worker').select('*');\r\n\r\n    if (error) {\r\n        return NextResponse.json({ error: error.message }, { status: 500 });\r\n    }\r\n\r\n    return NextResponse.json(data);\r\n}\r\n"],"names":[],"mappings":"AAAA,0BAA0B;;;;AAC1B;AACA;;;AAEA,MAAM,WAAW,CAAA,GAAA,yLAAA,CAAA,eAAY,AAAD,EACxB,QAAQ,GAAG,CAAC,wBAAwB,EACpC,QAAQ,GAAG,CAAC,yBAAyB;AAGlC,eAAe;IAClB,MAAM,EAAE,IAAI,EAAE,KAAK,EAAE,GAAG,MAAM,SAAS,IAAI,CAAC,UAAU,MAAM,CAAC;IAE7D,IAAI,OAAO;QACP,OAAO,gIAAA,CAAA,eAAY,CAAC,IAAI,CAAC;YAAE,OAAO,MAAM,OAAO;QAAC,GAAG;YAAE,QAAQ;QAAI;IACrE;IAEA,OAAO,gIAAA,CAAA,eAAY,CAAC,IAAI,CAAC;AAC7B","debugId":null}}]
-}

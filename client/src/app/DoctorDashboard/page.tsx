@@ -1,8 +1,7 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -17,18 +16,38 @@ import {
   MessageSquare 
 } from 'lucide-react';
 
+type StaffUser = {
+  id: string;
+  fullName: string;
+  email: string;
+  specialty?: string;
+};
+
 export default function DoctorDashboardPage() {
-  const { data: session, status } = useSession();
   const router = useRouter();
+  const [staffUser, setStaffUser] = useState<StaffUser | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Temporarily disabled redirect for development
-  // useEffect(() => {
-  //   if (status === 'unauthenticated') {
-  //     router.push('/DoctorLogin');
-  //   }
-  // }, [status, router]);
+  useEffect(() => {
+    // Check for staff authentication via localStorage
+    const staffToken = localStorage.getItem('staffToken');
+    const staffData = localStorage.getItem('staffUser');
+    
+    if (!staffToken || !staffData) {
+      router.push('/DoctorLogin');
+      return;
+    }
+    
+    try {
+      setStaffUser(JSON.parse(staffData));
+    } catch {
+      router.push('/DoctorLogin');
+    } finally {
+      setLoading(false);
+    }
+  }, [router]);
 
-  if (status === 'loading') {
+  if (loading) {
     return (
       <div className="min-h-screen bg-custom1 flex items-center justify-center">
         <div className="text-center">
@@ -68,7 +87,7 @@ export default function DoctorDashboardPage() {
           {/* Welcome Section */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-slate-800 mb-2">
-              Witaj, Dr. {session?.user?.name || 'Doktorze'}
+              Witaj, Dr. {staffUser?.fullName || 'Doktorze'}
             </h1>
             <p className="text-slate-600">
               Oto przegląd Twojego harmonogramu na dzisiaj

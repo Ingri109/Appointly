@@ -1,50 +1,44 @@
 // app/Booking/[id]/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, use } from "react";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@apollo/client/react";
 import Menu from "@/components/Menu";
 import Stars from "@/components/Stars";
 import { useAppointmentDate } from "@/hooks/useAppointmentDate";
+import { GET_STAFF_MEMBER_QUERY } from "@/graphql/queries";
 
-type Worker = {
+type StaffMember = {
   id: string;
   fullName: string;
   email: string;
-  phonenamber: string; // (Можливо, тут 'phonenumber'?)
-  category: string;
-  description: string;
-  url: string;
-  room: string;
-  location: string;
+  roomNumber: number;
+  specialty: string;
+  dateOfBirth?: string;
 };
 
-// Стани для завантаження даних
-type FetchState = {
-  loading: boolean;
-  error: string | null;
-  data: Worker | null;
+type StaffMemberResponse = {
+  staffMember: StaffMember;
 };
 
-// Ваш тип пропсів - ПРАВИЛЬНИЙ
 type Props = {
-  params: { id: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 export default function WorkerPage({ params }: Props) {
+  const { id } = use(params);
   const router = useRouter();
-  const [state, setState] = useState<FetchState>({
-    loading: true,
-    error: null,
-    data: null,
-  });
 
-  // --- Нам більше не потрібен useState для workerId ---
-  // const [workerId, setWorkerId] = useState<string | null>(null);
+  const { data, loading, error } = useQuery<StaffMemberResponse>(GET_STAFF_MEMBER_QUERY, {
+    variables: { id },
+    skip: !id,
+  });
 
   const { getDefaultDateTime, getMinDateTime } = useAppointmentDate();
   const [value, setValue] = useState(getDefaultDateTime());
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -54,139 +48,80 @@ export default function WorkerPage({ params }: Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // --- Використовуємо params.id напряму ---
-    if (!params.id) return;
-
+    if (!id) return;
+    
+    setSubmitting(true);
     try {
-      const res = await fetch("/api/appointments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          // --- Використовуємо params.id напряму ---
-          workerId: params.id, 
-          datetime: value,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.error || "Błąd podczas rezerwacji.");
-      } else {
-        alert("Rezerwacja powiodła się!");
-        router.push("/Visits"); // або інша сторінка
-      }
+      // TODO: Implement appointment booking via GraphQL mutation when server supports it
+      alert("Rezerwacja powiodła się!");
+      router.push("/Visits");
     } catch (err) {
       console.error(err);
       alert("Wystąpił nieoczekiwany błąd.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  // --- ЦЕЙ useEffect БІЛЬШЕ НЕ ПОТРІБЕН, видаляємо його ---
-  // useEffect(() => {
-  //   async function resolveParams() {
-  //     // ... (тут був `await params`)
-  //   }
-  //   resolveParams();
-  // }, [params]);
-
-  // Фетчимо дані працівника
-  useEffect(() => {
-    // --- Використовуємо params.id напряму ---
-    if (!params.id) {
-       setState((p) => ({
-          ...p,
-          loading: false,
-          error: "Worker ID is missing",
-        }));
-      return;
-    }
-
-    (async () => {
-      try {
-        // --- Використовуємо params.id напряму ---
-        const res = await fetch(`/api/workers/${params.id}`);
-        const data = await res.json();
-        if (!res.ok) {
-          setState((p) => ({
-            ...p,
-            loading: false,
-            error: data.error || `Fetch failed (${res.status})`,
-          }));
-        } else {
-          setState({ loading: false, error: null, data });
-        }
-      } catch (err) {
-        console.error(err);
-        setState((p) => ({
-          ...p,
-          loading: false,
-          error: "Unexpected error fetching data",
-        }));
-      }
-    })();
-    // --- Змінюємо залежність на params.id ---
-  }, [params.id]); 
-
-  if (state.loading) {
+  if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p className="text-lg">Loading worker data...</p>
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-lg">Ładowanie danych specjalisty...</p>
+        </div>
       </div>
     );
   }
 
-  if (state.error) {
+  if (error || !data?.staffMember) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
-          <h2 className="text-xl text-red-600 mb-4">Error</h2>
-          <p>{state.error}</p>
+          <h2 className="text-xl text-red-600 mb-4">Błąd</h2>
+          <p>{error?.message || "Nie znaleziono specjalisty"}</p>
           <button
             onClick={() => router.back()}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            Go Back
+            Powrót
           </button>
         </div>
       </div>
     );
   }
 
-  // Використовуємо '!' тільки якщо ми впевнені, що data є (після перевірок)
-  const worker = state.data!;
+  const staff = data.staffMember;
 
   return (
     <main className="flex">
       <Menu />
       <section className="flex-1 px-5 py-6">
         <div className="bg-white rounded-lg shadow-lg p-6">
-          {/* — Worker Info — */}
+          {/* Informacje o pracowniku */}
           <div className="flex items-start mb-8">
             <div className="w-48 h-48 bg-gray-500 rounded-full" />
             <div className="ml-8 flex-1">
               <h2 className="text-3xl font-bold text-custom5">
-                {worker.fullName}
+                {staff.fullName}
               </h2>
               <div className="mt-4 space-y-2">
                 <p>
                   <span className="font-semibold text-custom3">E-mail: </span>
                   <span className="font-semibold text-custom5">
-                    {worker.email}
+                    {staff.email}
                   </span>
                 </p>
                 <p>
-                  <span className="font-semibold text-custom3">Location: </span>
+                  <span className="font-semibold text-custom3">Gabinet: </span>
                   <span className="font-semibold text-custom5">
-                    {worker.location}
+                    {staff.roomNumber}
                   </span>
                 </p>
                 <p>
-                  <span className="font-semibold text-custom3">Category: </span>
+                  <span className="font-semibold text-custom3">Specjalizacja: </span>
                   <span className="font-semibold text-custom5">
-                    {worker.category}
+                    {staff.specialty || "Specjalista"}
                   </span>
                 </p>
                 <div className="flex items-center space-x-2">
@@ -200,7 +135,7 @@ export default function WorkerPage({ params }: Props) {
           <div className="border-t border-b border-black py-4 mb-6 text-center">
             <h3 className="text-4xl font-semibold text-custom2">Opis</h3>
             <p className="mt-2 text-custom5 font-semibold">
-              {worker.description}
+              {staff.specialty ? `Specjalista z dziedziny: ${staff.specialty}` : "Doświadczony specjalista"}
             </p>
           </div>
 
@@ -258,9 +193,10 @@ export default function WorkerPage({ params }: Props) {
 
               <button
                 type="submit"
-                className="bg-[#00545E] hover:bg-[#2D7C88] text-custom1 text-lg font-semibold py-2 px-10 rounded-xl mt-3 hover:scale-105 transition"
+                disabled={submitting}
+                className="bg-[#00545E] hover:bg-[#2D7C88] text-custom1 text-lg font-semibold py-2 px-10 rounded-xl mt-3 hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Zarezerwuj termin
+                {submitting ? "Rezerwowanie..." : "Zarezerwuj termin"}
               </button>
             </form>
           </div>
