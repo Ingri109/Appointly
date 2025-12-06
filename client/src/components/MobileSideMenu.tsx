@@ -1,5 +1,5 @@
 "use client";
-import { Menu, User, X, Calendar, BookOpen, LogOut, Stethoscope, Upload, Video, Shield, Users as UsersIcon } from "lucide-react";
+import { Menu, User, X, Calendar, BookOpen, LogOut, Stethoscope, Upload, Video, Shield } from "lucide-react";
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Separator } from "./ui/separator";

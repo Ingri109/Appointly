@@ -5,18 +5,18 @@ import Human from "@/icons/Human.svg";
 import Pen from "@/icons/Pen.svg";
 import Calender from "@/icons/Calender.svg";
 import SocialMedia from "@/components/SocialMedia";
-import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 const navItems = [
     {id: 1, link: '/Account', image: Human, alt: 'Przejdź do konta', title: 'Konto'},
     {id: 2, link: '/Visits', image: Calender, alt: 'Przejdź do wizyt', title: 'Wizyty'},
     {id: 3, link: '/Booking', image: Pen, alt: 'Przejdź do rezerwacji', title: 'Rezerwacja'},
-    {id: 4, link: '/Consult', image: Calender, alt: 'Konsultacja online', title: 'Konsultacja Online'},
-    {id: 5, link: '/ManageVisits', image: Calender, alt: 'Zarządzaj wizytami', title: 'Zarządzaj Wizytami'},
-    {id: 6, link: '/UploadTests', image: Calender, alt: 'Prześlij wyniki badań', title: 'Wyniki Badań'},
-    {id: 7, link: '/Plans', image: Calender, alt: 'Plany ubezpieczeniowe', title: 'Plany'},
-    {id: 8, link: '/SkypeLine', image: Calender, alt: 'Konsultacje Skype/Line', title: 'Skype/LINE'},
+    {id: 4, link: '/Specialists', image: Human, alt: 'Popularni specjaliści', title: 'Specjaliści'},
+    {id: 5, link: '/Consult', image: Calender, alt: 'Konsultacja online', title: 'Konsultacja Online'},
+    {id: 6, link: '/ManageVisits', image: Calender, alt: 'Zarządzaj wizytami', title: 'Zarządzaj Wizytami'},
+    {id: 7, link: '/UploadTests', image: Calender, alt: 'Prześlij wyniki badań', title: 'Wyniki Badań'},
+    {id: 8, link: '/Plans', image: Calender, alt: 'Plany ubezpieczeniowe', title: 'Plany'},
+    {id: 9, link: '/SkypeLine', image: Calender, alt: 'Konsultacje Skype/Line', title: 'Skype/LINE'},
 ];
 
 const Menu = () => {

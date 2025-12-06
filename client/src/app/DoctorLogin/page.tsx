@@ -1,41 +1,60 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { useMutation } from '@apollo/client/react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Shield, AlertCircle } from 'lucide-react';
 import Footer from '@/components/Footer';
+import { LOGIN_STAFF_MUTATION } from '@/graphql/mutations';
+
+type Staff = {
+  id: string;
+  fullName: string;
+  email: string;
+  specialty: string;
+};
+
+type LoginStaffResponse = {
+  loginStaff: {
+    accessToken: string;
+    user: Staff;
+  };
+};
 
 export default function DoctorLoginPage() {
-  const [doctorId, setDoctorId] = useState('');
+  const [staffId, setStaffId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const [loginStaff, { loading }] = useMutation<LoginStaffResponse>(LOGIN_STAFF_MUTATION, {
+    onCompleted: (data) => {
+      // Store the access token and user data
+      localStorage.setItem('staffToken', data.loginStaff.accessToken);
+      localStorage.setItem('staffUser', JSON.stringify(data.loginStaff.user));
+      router.push('/DoctorDashboard');
+    },
+    onError: (err) => {
+      setError(err.message || 'Nieprawidłowy ID lub hasło');
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
 
     try {
-      const result = await signIn('credentials', {
-        redirect: false,
-        doctorId,
-        password,
-        userType: 'doctor',
+      await loginStaff({
+        variables: {
+          input: {
+            id: staffId,
+            password,
+          },
+        },
       });
-
-      if (result?.error) {
-        setError('Nieprawidłowy ID lekarza lub hasło');
-      } else {
-        router.push('/DoctorDashboard');
-      }
-    } catch (err) {
-      setError('Wystąpił błąd podczas logowania');
-    } finally {
-      setLoading(false);
+    } catch {
+      // Error handled by onError callback
     }
   };
 
@@ -71,15 +90,15 @@ export default function DoctorLoginPage() {
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label htmlFor="doctorId" className="block text-sm font-medium text-slate-700 mb-2">
-                  ID Lekarza
+                <label htmlFor="staffId" className="block text-sm font-medium text-slate-700 mb-2">
+                  ID Pracownika
                 </label>
                 <input
-                  id="doctorId"
+                  id="staffId"
                   type="text"
-                  value={doctorId}
-                  onChange={(e) => setDoctorId(e.target.value)}
-                  placeholder="Wprowadź swój ID lekarza"
+                  value={staffId}
+                  onChange={(e) => setStaffId(e.target.value)}
+                  placeholder="Wprowadź swój ID pracownika"
                   required
                   className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                 />

@@ -1,3 +1,5 @@
+'use client';
+
 import { User } from "lucide-react";
 import { MobileSideMenu } from "./MobileSideMenu";
 import LogoImg from "@/imgs/LogoIMG.png";

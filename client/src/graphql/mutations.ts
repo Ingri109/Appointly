@@ -84,3 +84,21 @@ export const LOGOUT_STAFF_MUTATION = gql`
     logoutStaff(staffId: $staffId)
   }
 `;
+
+// User mutations
+export const UPDATE_USER_MUTATION = gql`
+  mutation UpdateUser($updateUserInput: UpdateUserInput!) {
+    updateUser(updateUserInput: $updateUserInput) {
+      id
+      name
+      email
+      dateOfBirth
+    }
+  }
+`;
+
+export const REMOVE_USER_MUTATION = gql`
+  mutation RemoveUser($id: String!) {
+    removeUser(id: $id)
+  }
+`;

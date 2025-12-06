@@ -5,7 +5,6 @@ import Human from "@/icons/Human.svg";
 import Pen from "@/icons/Pen.svg";
 import Calender from "@/icons/Calender.svg";
 import type { StaticImageData } from "next/image";
-import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import {useState} from "react";
@@ -50,14 +49,13 @@ export const NavItem = ({ navLink, isHovered, onHover, onLeave, onClick }: { nav
 };
 
 const Navigation = () => {
-    const [hovered, setHovered] = useState<number | null>(null);
+    const [, setHovered] = useState<number | null>(null);
     const router = useRouter();
-    const pathname = usePathname(); // Ensure usePathname is imported correctly
+    const pathname = usePathname();
 
     return (
         <div className="flex flex-col justify-start items-start w-full space-y-4">
             {navLinks.map((navLink) => {
-                const isHovered = hovered === navLink.id;
                 const clean = (s: string) => s.replace(/\/+$/g, '').toLowerCase();
                 const isActive = clean(pathname || '') === clean(navLink.link);
 
@@ -67,8 +65,6 @@ const Navigation = () => {
                 const buttonState = isActive
                     ? " bg-teal-50 shadow-[0_0px_12px_2px_rgba(0,0,0,0.28)] ring-4 ring-teal-300"
                     : " bg-custom1 shadow-[0_0px_10px_-1px_rgba(0,0,0,0.25)]";
-
-                const labelClasses = `text-lg font-medium whitespace-nowrap ${isActive ? 'text-custom5' : 'text-custom5'}`;
 
                 return (
                     <div
