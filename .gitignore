@@ -16,8 +16,9 @@ server/node_modules/
 /coverage
 
 # Next.js
-/.next/
+client/.next/
 /out/
+next-env.d.ts
 
 # Production
 /build
@@ -46,4 +47,3 @@ yarn-error.log*
 
 # Typescript
 *.tsbuildinfo
-next-env.d.ts

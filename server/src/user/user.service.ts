@@ -15,7 +15,7 @@ export class UserService {
   ) {}
 
   async create(createUserInput: CreateUserInput): Promise<User> {
-    const existingUser = await this.findOneByEmail(createUserInput.email);
+    const existingUser = await this.findByEmail(createUserInput.email);
     if (existingUser) {
       throw new ConflictException('Користувач з таким email вже існує');
     }
@@ -35,11 +35,10 @@ export class UserService {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.userRepository.findOneBy({ email });
-  }
-
-  async findOneByEmail(email: string): Promise<User | null> {
-    return this.userRepository.findOneBy({ email });
+    return this.userRepository.createQueryBuilder('user')
+    .where('user.email = :email', { email })
+    .addSelect('user.password') 
+    .getOne();
   }
 
   async update(id: string, updateUserInput: UpdateUserInput): Promise<User> {

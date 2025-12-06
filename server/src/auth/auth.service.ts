@@ -27,11 +27,7 @@ export class AuthService {
       );
     }
 
-    const hashPassword = await bcrypt.hash(input.password, 10);
-    const newUser = await this.userService.create({
-      ...input,
-      password: hashPassword,
-    });
+    const newUser = await this.userService.create(input);
 
     const tokens = await this.getTokens(newUser.id, newUser.email);
     await this.updateRefreshToken(newUser.id, tokens.refreshToken);
@@ -39,18 +35,29 @@ export class AuthService {
   }
 
   async login(input: LoginInput) {
+    // --- DEBUG START ---
+    console.log('1. Отримано від фронтенду:', JSON.stringify(input, null, 2));
+    
     const user = await this.userService.findByEmail(input.email);
+    
+    console.log('2. Знайдено юзера в БД:', user ? user.email : 'Не знайдено');
+    console.log('3. Хеш пароля з БД:', user?.password);
+    // --- DEBUG END ---
+  
     if (!user) {
       throw new UnauthorizedException('Nieprawidłowy adres e-mail lub hasło'); 
     }
-
+  
+    // Саме тут виникає помилка, якщо п.1 або п.3 пусті
     const isPasswordValid = await bcrypt.compare(input.password, user.password);
+    
     if (!isPasswordValid) {
       throw new UnauthorizedException('Nieprawidłowy adres e-mail lub hasło');
     }
+    
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRefreshToken(user.id, tokens.refreshToken);
-
+  
     return { ...tokens, user };
   }
 
