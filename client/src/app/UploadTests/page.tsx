@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
-import Menu from '@/components/Menu';
 import BackToMenu from '@/components/BackToMenu';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -123,29 +122,25 @@ export default function UploadTestsPage() {
 
   if (!isAuthenticated || loading) {
     return (
-      <div className="flex min-h-screen bg-custom1">
-        <Menu />
-        <div className="flex-1 flex flex-col">
-          <Header />
-          <main className="flex-1 flex items-center justify-center">
+      <div className="flex flex-col min-h-screen bg-custom1">
+        <Header />
+        <main className="flex-1 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-full">
             <div className="text-center">
               <div className="w-12 h-12 border-4 border-[#3CA6A6] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
               <p className="text-slate-600">Ładowanie wyników badań...</p>
             </div>
-          </main>
-          <Footer />
-        </div>
+          </div>
+        </main>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-custom1">
-      <Menu />
-      <div className="flex-1 flex flex-col">
-        <Header />
-        
-        <main className="flex-1 overflow-y-auto">
+    <div className="flex flex-col min-h-screen bg-custom1">
+      <Header />
+      <main className="flex-1 overflow-y-auto">
           <div className="max-w-5xl mx-auto px-6 py-8">
             <BackToMenu />
             
@@ -279,10 +274,8 @@ export default function UploadTestsPage() {
               )}
             </div>
           </div>
-        </main>
-        
-        <Footer />
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 }

@@ -13,21 +13,29 @@ interface IconsSocialMediaType {
 }
 
 const IconsSocialMedia: IconsSocialMediaType[] = [
-    {id: 1, link: '/', image: Discord, alt: 'Go to our Discord',},
-    {id: 2, link: '/', image: Github, alt: 'Go to our Github', },
-    {id: 3, link: '/', image: Facebook, alt: 'Go to our Facebook',},
-    {id: 4, link: '/', image: Instagram, alt: 'Go to our Instagram',},
+    {id: 1, link: 'https://discord.gg/appointly', image: Discord, alt: 'Dołącz do naszego Discord'},
+    {id: 2, link: 'https://github.com/Ingri109/Appointly', image: Github, alt: 'Zobacz na Github'},
+    {id: 3, link: 'https://facebook.com/appointly', image: Facebook, alt: 'Odwiedź nasz Facebook'},
+    {id: 4, link: 'https://instagram.com/appointly', image: Instagram, alt: 'Śledź nas na Instagram'},
 ];
 
-const SocialMedia= () => {
+const SocialMedia = () => {
     return (
-        <div className={'flex flex-row justify-start items-center space-x-4'}>
+        <div className="flex flex-row justify-start items-center space-x-3">
             {IconsSocialMedia.map((iconSM) => (
-                <Link key={iconSM.id} href={iconSM.link} className={'flex justify-center items-center bg-custom1 rounded-lg p-1 cursor-pointer transform-all shadow-[0_0px_10px_-1px_rgba(0,0,0,0.25)] shadow-black hover:scale-105 hover:shadow-[0_2px_12px_1px_rgba(0,0,0,0.35)] focus:shadow-[0_0px_10px_2px_rgba(0,0,0,0.25)] focus:shadow-custom1'}>
-                    <Image className={'h-[30px] w-[30px]'} src={iconSM.image} alt={iconSM.alt}></Image>
+                <Link 
+                    key={iconSM.id} 
+                    href={iconSM.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={iconSM.alt}
+                    className="flex justify-center items-center bg-teal-500 hover:bg-teal-400 rounded-lg p-2 cursor-pointer transition-all hover:scale-110 shadow-md"
+                >
+                    <Image className="h-6 w-6 brightness-0 invert" src={iconSM.image} alt={iconSM.alt} />
                 </Link>
             ))}
         </div>
-    )
-}
-export default SocialMedia
+    );
+};
+
+export default SocialMedia;

@@ -1,9 +1,10 @@
 "use client";
-import { Menu, User, X, Calendar, BookOpen, LogOut, Stethoscope, Upload, Video, Shield } from "lucide-react";
+import { Menu, User, X, Calendar, BookOpen, LogOut, Stethoscope, Upload, Shield, CreditCard, Settings } from "lucide-react";
 import Link from 'next/link';
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Separator } from "./ui/separator";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const menuItems = [
   { icon: User, label: "Konto", href: "/Account" },
@@ -12,17 +13,44 @@ const menuItems = [
   { icon: Stethoscope, label: "Konsultacja Online", href: "/Consult" },
   { icon: Upload, label: "Wyniki Badań", href: "/UploadTests" },
   { icon: Shield, label: "Plany Ubezpieczeniowe", href: "/Plans" },
-  { icon: Video, label: "Skype/LINE", href: "/SkypeLine" },
+  { icon: CreditCard, label: "Płatności", href: "/Payment" },
+  { icon: Settings, label: "Zarządzaj Wizytami", href: "/ManageVisits" },
 ];
+
+interface UserData {
+  name?: string;
+  email?: string;
+}
 
 export function MobileSideMenu() {
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<UserData | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch {
+        setUser(null);
+      }
+    }
+  }, [isOpen]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setIsOpen(false);
+    router.push('/');
+  };
 
   return (
     <>
       <button 
         onClick={() => setIsOpen(true)} 
         className="p-2 hover:bg-teal-600 rounded-lg transition-colors"
+        aria-label="Otwórz menu"
       >
         <Menu size={24} />
       </button>
@@ -47,17 +75,19 @@ export function MobileSideMenu() {
             <button
               onClick={() => setIsOpen(false)}
               className="absolute top-4 right-4 p-2 hover:bg-teal-600 rounded-lg transition-colors"
+              aria-label="Zamknij menu"
             >
               <X size={24} />
             </button>
             <div className="flex items-center gap-4 mt-8">
               <Avatar className="w-16 h-16 border-2 border-white">
-                <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop" />
-                <AvatarFallback className="bg-teal-100 text-teal-700">JD</AvatarFallback>
+                <AvatarFallback className="bg-teal-100 text-teal-700 text-xl">
+                  {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                </AvatarFallback>
               </Avatar>
               <div>
-                <h3 className="text-white font-medium">John Doe</h3>
-                <p className="text-teal-100 text-sm">john.doe@email.com</p>
+                <h3 className="text-white font-medium">{user?.name || 'Gość'}</h3>
+                <p className="text-teal-100 text-sm truncate max-w-[140px]">{user?.email || 'Zaloguj się'}</p>
               </div>
             </div>
           </div>
@@ -82,10 +112,7 @@ export function MobileSideMenu() {
             <Separator className="my-4" />
 
             <button
-              onClick={() => {
-                setIsOpen(false);
-                alert("Wylogowano");
-              }}
+              onClick={handleLogout}
               className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-50 text-slate-700 hover:text-red-600 transition-colors w-full"
             >
               <LogOut size={20} />

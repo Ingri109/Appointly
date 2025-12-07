@@ -45,35 +45,34 @@ const Registration = ({ onToggleForm }: RegistrationProps) => {
   // Додаємо типи <RegisterData, RegisterVars>
   const [registerUser, { loading }] = useMutation<RegisterData, RegisterVars>(REGISTER_MUTATION, {
     onError: (error) => {
-      setMessage(`Error: ${error.message}`);
+      setMessage(`Błąd: ${error.message}`);
     },
     onCompleted: (data) => {
-      setMessage("Successful registration! Redirecting...");
+      setMessage("Rejestracja zakończona! Przekierowywanie...");
       
-      // 1. ЗБЕРІГАЄМО ТОКЕН
-      // Використовуй одну назву ключа всюди (наприклад 'accessToken')
+      // Зберігаємо токен та дані користувача
       if (data?.register?.accessToken) {
-          localStorage.setItem('accessToken', data.register.accessToken);
+          localStorage.setItem('token', data.register.accessToken);
+          localStorage.setItem('user', JSON.stringify(data.register.user));
       }
 
-      // 2. ОЧИЩЕННЯ ПОЛІВ
+      // Очищення полів
       setEmail("");
       setPassword("");
       setFullName("");
       setConfirmPassword("");
 
-      // 3. ПЕРЕАДРЕСАЦІЯ
-      // router.push працює без перезавантаження сторінки (швидше)
+      // Переадресація
       router.push('/Account'); 
     },
   });
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage("Registration...");
+    setMessage("Rejestracja...");
 
     if (confirmPassword !== password) {
-      setMessage("Passwords do not match");
+      setMessage("Hasła nie są takie same");
       return;
     }
 
@@ -99,7 +98,7 @@ const Registration = ({ onToggleForm }: RegistrationProps) => {
   return (
     <>
       <h1 className="text-2xl md:text-5xl font-bold text-custom5 mb-4 md:mb-8 text-center">
-        Create your new account
+        Utwórz nowe konto
       </h1>
 
       <form
@@ -107,7 +106,7 @@ const Registration = ({ onToggleForm }: RegistrationProps) => {
         className="bg-[#3FA1A9] p-6 md:p-8 rounded-xl shadow-lg flex flex-col items-center gap-4"
       >
         <div className="flex flex-col w-[300px] md:w-[280px]">
-          <label className="text-custom1 font-bold mb-1">Name & Surname</label>
+          <label className="text-custom1 font-bold mb-1">Imię i nazwisko</label>
           <input
             type="text"
             name="Name&Surname"
@@ -116,7 +115,7 @@ const Registration = ({ onToggleForm }: RegistrationProps) => {
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             className="h-[45px] rounded-lg px-4 bg-custom1 border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00545E]"
-            placeholder="Name & Surname"
+            placeholder="Imię i nazwisko"
           />
         </div>
 
@@ -135,7 +134,7 @@ const Registration = ({ onToggleForm }: RegistrationProps) => {
         </div>
 
         <div className="relative flex flex-col w-[300px] md:w-[280px]">
-          <label className="text-custom1 font-bold mb-1">Password</label>
+          <label className="text-custom1 font-bold mb-1">Hasło</label>
           <span
             onClick={togglePasswordVisibility}
             className={"absolute top-7 right-0 p-2 cursor-pointer"}
@@ -143,7 +142,7 @@ const Registration = ({ onToggleForm }: RegistrationProps) => {
             <Image
               className={"w-8 h-8 "}
               src={showPassword ? EyeOpen : EyeClose}
-              alt={"Open Password"}
+              alt={"Pokaż hasło"}
             />
           </span>
           <input
@@ -154,13 +153,13 @@ const Registration = ({ onToggleForm }: RegistrationProps) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="h-[45px] rounded-lg px-4 bg-custom1 border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00545E]"
-            placeholder="Password"
+            placeholder="Hasło"
           />
         </div>
 
         <div className="flex flex-col w-[300px] md:w-[280px]">
           <label className="text-custom1 font-bold mb-1">
-            Confirm Password
+            Potwierdź hasło
           </label>
           <input
             type={showPassword ? "password" : "text"}
@@ -170,7 +169,7 @@ const Registration = ({ onToggleForm }: RegistrationProps) => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             className="h-[45px] rounded-lg px-4 bg-custom1 border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00545E]"
-            placeholder="Confirm Password"
+            placeholder="Potwierdź hasło"
           />
         </div>
 
@@ -179,7 +178,7 @@ const Registration = ({ onToggleForm }: RegistrationProps) => {
           onClick={onToggleForm}
           className="text-[14px] hover:text-[#012E40] mt-2 underline"
         >
-          Already have an account? Log in
+          Masz już konto? Zaloguj się
         </button>
 
         <button
@@ -189,7 +188,7 @@ const Registration = ({ onToggleForm }: RegistrationProps) => {
             loading ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
-          {loading ? "Processing..." : "Sign Up"}
+          {loading ? "Przetwarzanie..." : "Zarejestruj się"}
         </button>
         <label
           className={

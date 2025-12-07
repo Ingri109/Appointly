@@ -1,9 +1,9 @@
 import Header from '@/components/Header';
-import Menu from '@/components/Menu';
 import BackToMenu from '@/components/BackToMenu';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Shield, CheckCircle, Star } from 'lucide-react';
+import Link from 'next/link';
 
 const plans = [
   { id: 1, name: 'Basic', price: 29, period: 'month', popular: false, features: ['2 consultations per month','Email support','Basic health tracking','Prescription management','Access to general physicians'] },
@@ -13,11 +13,9 @@ const plans = [
 
 export default function PlansPage() {
   return (
-    <div className="flex min-h-screen bg-custom1">
-      <Menu />
-      <div className="flex-1 flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 overflow-y-auto bg-custom1">
+    <div className="flex flex-col min-h-screen bg-custom1">
+      <Header />
+      <main className="flex-1 overflow-y-auto">
           <div className="max-w-6xl mx-auto px-6 py-8">
             <BackToMenu />
             
@@ -71,9 +69,11 @@ export default function PlansPage() {
                       <li className="text-sm text-teal-600 font-medium ml-6">+{plan.features.length - 5} więcej funkcji</li>
                     )}
                   </ul>
-                  <Button className={`w-full rounded-xl ${plan.popular ? 'bg-teal-700 hover:bg-teal-800 text-white' : 'bg-white text-teal-700 border border-teal-700 hover:bg-teal-50'}`}>
-                    {plan.popular ? 'Rozpocznij' : 'Wybierz Plan'}
-                  </Button>
+                  <Link href="/Payment">
+                    <Button className={`w-full rounded-xl ${plan.popular ? 'bg-teal-700 hover:bg-teal-800 text-white' : 'bg-white text-teal-700 border border-teal-700 hover:bg-teal-50'}`}>
+                      {plan.popular ? 'Rozpocznij' : 'Wybierz Plan'}
+                    </Button>
+                  </Link>
                 </div>
               ))}
             </div>
@@ -101,9 +101,8 @@ export default function PlansPage() {
               </div>
             </div>
           </div>
-        </main>
-        <Footer />
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 }

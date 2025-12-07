@@ -1,5 +1,4 @@
 'use client';
-import Menu from "@/components/Menu";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BackToMenu from "@/components/BackToMenu";
@@ -68,31 +67,30 @@ const VisitsPage = () => {
 
     if (!isAuthenticated || loading) {
         return (
-            <div className="flex min-h-screen bg-custom1">
-                <Menu />
-                <div className="flex-1 flex flex-col min-h-screen">
-                    <Header />
-                    <main className="flex-1 flex items-center justify-center">
+            <div className="flex flex-col min-h-screen bg-custom1">
+                <Header />
+                <main className="flex-1 overflow-y-auto">
+                    <div className="flex items-center justify-center min-h-full">
                         <div className="text-center">
                             <div className="w-12 h-12 border-4 border-[#3CA6A6] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                             <p className="text-slate-600">Ładowanie wizyt...</p>
                         </div>
-                    </main>
-                    <Footer />
-                </div>
+                    </div>
+                </main>
+                <Footer />
             </div>
         );
     }
 
     if (appointments.length === 0) {
         return (
-            <div className="flex min-h-screen bg-custom1">
-                <Menu />
-                <div className="flex-1 flex flex-col min-h-screen">
-                    <Header />
-                    <main className="flex-1 flex items-center justify-center">
-                        <div className="text-center">
-                            <Calendar size={64} className="mx-auto mb-4 text-slate-300" />
+            <div className="flex flex-col min-h-screen bg-custom1">
+                <Header />
+                <main className="flex-1 overflow-y-auto">
+                    <div className="max-w-4xl mx-auto px-4 py-4">
+                        <BackToMenu />
+                        <div className="flex flex-col items-center justify-center py-12">
+                            <Calendar size={64} className="mb-4 text-slate-300" />
                             <h2 className="text-xl font-semibold text-slate-700 mb-2">Brak zaplanowanych wizyt</h2>
                             <p className="text-slate-500 mb-4">Nie masz jeszcze żadnych wizyt</p>
                             <Button 
@@ -102,19 +100,17 @@ const VisitsPage = () => {
                                 Umów wizytę
                             </Button>
                         </div>
-                    </main>
-                    <Footer />
-                </div>
+                    </div>
+                </main>
+                <Footer />
             </div>
         );
     }
 
     return (
-        <div className="flex min-h-screen bg-custom1">
-            <Menu />
-            <div className="flex-1 flex flex-col min-h-screen">
-                <Header />
-                <main className="flex-1 overflow-y-auto">
+        <div className="flex flex-col min-h-screen bg-custom1">
+            <Header />
+            <main className="flex-1 overflow-y-auto">
                     <div className="max-w-4xl mx-auto px-6 py-8">
                         <BackToMenu />
                         
@@ -167,9 +163,8 @@ const VisitsPage = () => {
                             ))}
                         </div>
                     </div>
-                </main>
-                <Footer />
-            </div>
+            </main>
+            <Footer />
         </div>
     );
 };

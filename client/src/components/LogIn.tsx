@@ -43,25 +43,21 @@ const LogIn = ({ onToggleForm }: LogInProps) => {
     LOGIN_MUTATION,
     {
       onError: (error) => {
-        setMessage(error.message || "Login error");
+        setMessage(error.message || "Błąd logowania");
         console.error(error);
       },
       onCompleted: (data) => {
-        // Тепер TypeScript знає, що 'data' має поле 'login'
-        // Використовуємо опціональний ланцюжок (?.) про всяк випадок
         if (data?.login?.accessToken) {
-          setMessage("Success! Redirecting...");
+          setMessage("Sukces! Przekierowywanie...");
 
-          // Зберігаємо токен
-          localStorage.setItem("accessToken", data.login.accessToken);
-
-          // Можна зберегти дані користувача, якщо треба
-          // localStorage.setItem('userData', JSON.stringify(data.login.user));
+          // Зберігаємо токен та дані користувача
+          localStorage.setItem("token", data.login.accessToken);
+          localStorage.setItem("user", JSON.stringify(data.login.user));
 
           // Переходимо на сторінку акаунту
           router.push("/Account");
         } else {
-          setMessage("Error: No access token received");
+          setMessage("Błąd: Nie otrzymano tokena dostępu");
         }
       },
     }
@@ -69,7 +65,7 @@ const LogIn = ({ onToggleForm }: LogInProps) => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage("Logging...");
+    setMessage("Logowanie...");
 
     try {
       // Тут TypeScript теж перевірить, чи правильно ми передаємо variables
@@ -94,7 +90,7 @@ const LogIn = ({ onToggleForm }: LogInProps) => {
   return (
     <>
       <h1 className="text-2xl md:text-5xl font-bold text-[#003147] mb-4 md:mb-8 text-center">
-        Log in to your account
+        Zaloguj się do konta
       </h1>
       <form
         onSubmit={handleLogin}
@@ -114,7 +110,7 @@ const LogIn = ({ onToggleForm }: LogInProps) => {
         </div>
 
         <div className="relative flex flex-col w-[300px] md:w-[280px]">
-          <label className="text-custom1 font-bold mb-1">Password</label>
+          <label className="text-custom1 font-bold mb-1">Hasło</label>
           <span
             onClick={togglePasswordVisibility}
             className={"absolute top-7 right-0 p-2 cursor-pointer"}
@@ -122,7 +118,7 @@ const LogIn = ({ onToggleForm }: LogInProps) => {
             <Image
               className={"w-8 h-8 "}
               src={showPassword ? EyeOpen : EyeClose}
-              alt={"Open Password"}
+              alt={"Pokaż hasło"}
             />
           </span>
           <input
@@ -132,7 +128,7 @@ const LogIn = ({ onToggleForm }: LogInProps) => {
             autoComplete="on"
             required
             className="h-[45px] rounded-lg px-4 bg-custom1 border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00545E]"
-            placeholder="Password"
+            placeholder="Hasło"
           />
         </div>
 
@@ -141,7 +137,7 @@ const LogIn = ({ onToggleForm }: LogInProps) => {
           onClick={onToggleForm}
           className="text-[14px] hover:text-[#012E40] mt-2 underline"
         >
-          Don&apos;t have an account? Sign up
+          Nie masz konta? Zarejestruj się
         </button>
 
         <button
@@ -151,7 +147,7 @@ const LogIn = ({ onToggleForm }: LogInProps) => {
             loading ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
-          {loading ? "Logging in..." : "Log In"}
+          {loading ? "Logowanie..." : "Zaloguj"}
         </button>
         <label
           className={
