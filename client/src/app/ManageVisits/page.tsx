@@ -1,9 +1,9 @@
 import Header from '@/components/Header';
-import Menu from '@/components/Menu';
 import BackToMenu from '@/components/BackToMenu';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, MapPin, Video, CheckCircle } from 'lucide-react';
+import Link from 'next/link';
 
 const upcomingVisits = [
   { id: 1, doctor: 'Dr. Sarah Mitchell', specialty: 'Cardiologist', date: 'December 1, 2025', time: '10:00 AM', type: 'video', location: 'Online', status: 'confirmed', avatar: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200&h=200&fit=crop' },
@@ -17,11 +17,9 @@ const pastVisits = [
 
 export default function ManageVisitsPage() {
   return (
-    <div className="flex min-h-screen bg-custom1">
-      <Menu />
-      <div className="flex-1 flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 overflow-y-auto bg-custom1">
+    <div className="flex flex-col min-h-screen bg-custom1">
+      <Header />
+      <main className="flex-1 overflow-y-auto">
           <div className="max-w-6xl mx-auto px-6 py-8">
             <BackToMenu />
             
@@ -107,10 +105,12 @@ export default function ManageVisitsPage() {
                 {/* Quick Actions */}
                 <div className="bg-gradient-to-br from-teal-600 to-teal-700 rounded-2xl p-5 text-white shadow-lg">
                   <h3 className="text-lg font-semibold mb-3">Szybkie Akcje</h3>
-                  <Button className="w-full bg-white text-teal-700 hover:bg-teal-50 rounded-xl mb-3">
-                    <Calendar size={18} className="mr-2" />
-                    Umów Nową Wizytę
-                  </Button>
+                  <Link href="/Booking">
+                    <Button className="w-full bg-white text-teal-700 hover:bg-teal-50 rounded-xl mb-3">
+                      <Calendar size={18} className="mr-2" />
+                      Umów Nową Wizytę
+                    </Button>
+                  </Link>
                   <p className="text-sm text-teal-100">Musisz spotkać się z lekarzem? Zarezerwuj swoją kolejną wizytę teraz.</p>
                 </div>
 
@@ -131,9 +131,11 @@ export default function ManageVisitsPage() {
                             <p className="text-xs text-slate-400 mt-1">{visit.date}</p>
                           </div>
                         </div>
-                        <Button variant="outline" size="sm" className="w-full text-teal-700 border-teal-600 hover:bg-teal-50 rounded-lg text-xs">
-                          Umów Ponownie
-                        </Button>
+                        <Link href="/Booking">
+                          <Button variant="outline" size="sm" className="w-full text-teal-700 border-teal-600 hover:bg-teal-50 rounded-lg text-xs">
+                            Umów Ponownie
+                          </Button>
+                        </Link>
                       </div>
                     ))}
                   </div>
@@ -141,9 +143,8 @@ export default function ManageVisitsPage() {
               </div>
             </div>
           </div>
-        </main>
-        <Footer />
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 }
