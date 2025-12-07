@@ -17,10 +17,12 @@ input CreateStaffInput {
 }
 
 input CreateUserInput {
+  address: String
   dateOfBirth: String
   email: String!
   name: String!
   password: String!
+  phone: String
 }
 
 input LoginInput {
@@ -86,16 +88,20 @@ input UpdateStaffInput {
 }
 
 input UpdateUserInput {
+  address: String
   dateOfBirth: String
   email: String
   id: String!
   name: String
   password: String
+  phone: String
 }
 
 type User {
+  bloodType: String
   dateOfBirth: String
   email: String!
   id: String!
   name: String!
+  phone: String
 }

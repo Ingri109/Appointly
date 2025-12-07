@@ -8,6 +8,8 @@ export const GET_USER_BY_EMAIL = gql`
       name
       email
       dateOfBirth
+      bloodType
+      phone
     }
   }
 `;
@@ -33,6 +35,7 @@ export const GET_STAFF_MEMBER_QUERY = gql`
       roomNumber
       specialty
       dateOfBirth
+      
     }
   }
 `;

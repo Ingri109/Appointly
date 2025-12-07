@@ -33,4 +33,13 @@ export class User {
 
   @Column({ nullable: true, type: 'varchar' })
   hashedRefreshToken?: string | null;
+
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', length: 5, nullable: true }) 
+  bloodType?: string;
+
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', length: 20, nullable: true }) 
+  phone?: string;
 }
+

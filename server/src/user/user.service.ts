@@ -42,20 +42,34 @@ export class UserService {
   }
 
   async update(id: string, updateUserInput: UpdateUserInput): Promise<User> {
+    if (!id) {
+      throw new NotFoundException(`ID не передано`);
+    }
+  
+    // 2. Хешування пароля (залишаємо вашу логіку)
     if (updateUserInput.password) {
         const salt = await bcrypt.genSalt();
         updateUserInput.password = await bcrypt.hash(updateUserInput.password, salt);
     }
-
-    const user = await this.userRepository.preload({
-      ...updateUserInput,
-      id: id,
-    });
-
+  
+    // 3. ✅ КРИТИЧНЕ ВИПРАВЛЕННЯ:
+    // Створюємо копію об'єкта input, щоб не мутувати оригінал
+    const { id: _, ...updateData } = updateUserInput;
+  
+    // 4. Формуємо об'єкт для preload явно
+    // Спочатку ID, потім всі інші поля
+    const userToUpdate = {
+        id: id,
+        ...updateData
+    };
+  
+    // 5. Preload
+    const user = await this.userRepository.preload(userToUpdate);
+  
     if (!user) {
       throw new NotFoundException(`Користувача з ID ${id} не знайдено`);
     }
-
+  
     return this.userRepository.save(user);
   }
 
