@@ -2,18 +2,37 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Appointment {
+  createdAt: DateTime!
+  date: String!
+  id: String!
+  staff: Staff!
+  status: String!
+  time: String!
+  user: User!
+}
+
 type AuthResponse {
   accessToken: String!
   user: User!
 }
 
+input CreateAppointmentInput {
+  date: String!
+  staffId: String!
+  time: String!
+}
+
 input CreateStaffInput {
+  assessment: Int
   dateOfBirth: String
+  description: String
   email: String!
   fullName: String!
+  location: String
   password: String!
-  roomNumber: Int!
   specialty: String
+  url: String
 }
 
 input CreateUserInput {
@@ -24,6 +43,11 @@ input CreateUserInput {
   password: String!
   phone: String
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 input LoginInput {
   email: String!
@@ -36,6 +60,7 @@ input LoginStaffInput {
 }
 
 type Mutation {
+  createAppointment(createAppointmentInput: CreateAppointmentInput!): Appointment!
   createStaff(createStaffInput: CreateStaffInput!): Staff!
   login(loginInput: LoginInput!): AuthResponse!
   loginStaff(loginStaffInput: LoginStaffInput!): StaffAuthResponse!
@@ -52,8 +77,10 @@ type Mutation {
 
 type Query {
   allStaff: [Staff!]!
+  getBookedSlots(date: String!, staffId: String!): [String!]!
+  myAppointments: [Appointment!]!
   staffMember(id: String!): Staff!
-  user(email: String!): User!
+  user(id: String!): User!
   users: [User!]!
 }
 
@@ -64,12 +91,16 @@ input RegisterInput {
 }
 
 type Staff {
+  appointments: [Appointment!]
+  assessment: Int
   dateOfBirth: String
+  description: String
   email: String!
   fullName: String!
   id: String!
-  roomNumber: Int!
-  specialty: String!
+  location: String
+  specialty: String
+  url: String
 }
 
 type StaffAuthResponse {
@@ -78,13 +109,16 @@ type StaffAuthResponse {
 }
 
 input UpdateStaffInput {
+  assessment: Int
   dateOfBirth: String
+  description: String
   email: String
   fullName: String
   id: String!
+  location: String
   password: String
-  roomNumber: Int
   specialty: String
+  url: String
 }
 
 input UpdateUserInput {
@@ -98,6 +132,7 @@ input UpdateUserInput {
 }
 
 type User {
+  appointments: [Appointment!]
   bloodType: String
   dateOfBirth: String
   email: String!

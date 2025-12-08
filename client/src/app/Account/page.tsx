@@ -12,24 +12,21 @@ import {
   Calendar,
   MapPin,
   Pencil,
-  Camera,
   Clock,
-  Heart,
-  ChevronRight,
   X,
   Check,
 } from "lucide-react";
 
-// Імпорт ваших запитів та мутацій
-import { GET_USER_BY_EMAIL } from "@/graphql/queries"; 
+// Імпорти запитів
+import { GET_USER_BY_ID, GET_MY_APPOINTMENTS_QUERY } from "@/graphql/queries"; 
 import { LOGOUT_MUTATION, UPDATE_USER_MUTATION } from "@/graphql/mutations"; 
 
-// Компоненти
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ImageCard1 from "@/imgs/ImageCard1.png";
 
-// Типи даних
+// --- ТИПИ ---
+
 interface UserData {
   id: string;
   name: string;
@@ -39,52 +36,43 @@ interface UserData {
   address?: string;
 }
 
+// Тип для візиту з бекенду
+interface Appointment {
+  id: string;
+  date: string;
+  time: string;
+  status: string;
+  staff: {
+    fullName: string;
+    specialty: string;
+  };
+}
+
 interface GetUserData {
   user: UserData;
 }
 
-// ✅ ДОДАНО: Тип змінних, які ми відправляємо
-interface GetUserVars {
-  email: string;
+interface GetAppointmentsData {
+  myAppointments: Appointment[];
 }
 
-// Mock data (залишаємо як є, поки немає бекенду для цього)
-const mockAppointments = [
-  {
-    id: "1",
-    doctorName: "Dr. Anna Kowalska",
-    specialty: "Kardiolog",
-    date: "5 Gru, 2025",
-    time: "10:00",
-    status: "Potwierdzona",
-  },
-  {
-    id: "2",
-    doctorName: "Dr. Michał Nowak",
-    specialty: "Dermatolog",
-    date: "12 Gru, 2025",
-    time: "14:30",
-    status: "Oczekująca",
-  },
-];
+interface GetUserVars {
+  id: string;
+}
 
 const Account: React.FC = () => {
   const router = useRouter();
-  const client = useApolloClient(); // Для очищення кешу при виході
+  const client = useApolloClient();
 
-  // Стани для UI
-  const [activeTab, setActiveTab] = useState<"dashboard" | "profile">(
-    "dashboard"
-  );
+  // Стани
+  const [activeTab, setActiveTab] = useState<"dashboard" | "profile">("dashboard");
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
-
-  // Форма редагування
+  const [userId, setUserId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<UserData>>({});
 
-  // 1. Отримуємо email з localStorage лише для ініціалізації запиту
+  // 1. Отримуємо ID
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token");
     const storedUser = localStorage.getItem("user");
 
     if (!token || !storedUser) {
@@ -94,23 +82,31 @@ const Account: React.FC = () => {
 
     try {
       const parsedUser = JSON.parse(storedUser);
-      if (parsedUser?.email) {
-        setUserEmail(parsedUser.email);
+      if (parsedUser?.id) {
+        setUserId(parsedUser.id);
       }
     } catch (e) {
-      console.error("Failed to parse user from local storage");
+      console.error("Failed to parse user");
       router.push("/Login");
     }
   }, [router]);
 
-  // 2. Використовуємо useQuery замість useEffect для завантаження даних
-  // skip: !userEmail означає, що запит не піде, поки ми не дістанемо email з localStorage
-  const { data, loading, error } = useQuery<GetUserData, GetUserVars>(
-    GET_USER_BY_EMAIL,
+  // 2. Запит користувача
+  const { data: userDataResponse, loading: userLoading, error: userError } = useQuery<GetUserData, GetUserVars>(
+    GET_USER_BY_ID,
     {
-      variables: { email: userEmail || "" },
-      skip: !userEmail,
-      fetchPolicy: "network-only", // Завжди брати свіжі дані
+      variables: { id: userId || "" },
+      skip: !userId,
+      fetchPolicy: "network-only",
+    }
+  );
+
+  // 3. Запит візитів
+  const { data: appointmentsResponse } = useQuery<GetAppointmentsData>(
+    GET_MY_APPOINTMENTS_QUERY,
+    {
+      skip: !userId,
+      fetchPolicy: "network-only",
     }
   );
 
@@ -118,32 +114,42 @@ const Account: React.FC = () => {
   const [logout] = useMutation(LOGOUT_MUTATION);
   const [updateUser, { loading: saving }] = useMutation(UPDATE_USER_MUTATION);
 
-  // Формуємо об'єкт користувача, об'єднуючи дані з сервера та дефолтні значення
-  // (оскільки у queries.ts немає phone та address)
-  const userData: UserData | null = data?.user
+  const userData: UserData | null = userDataResponse?.user
     ? {
-        ...data.user,
-        phone: data.user.phone || "Numer telefonu", // Mock fallback
-        address: data.user.address || "Nie podano", 
-        dateOfBirth: data.user.dateOfBirth || "Nie podano"
+        ...userDataResponse.user,
+        phone: userDataResponse.user.phone || "Numer telefonu",
+        address: userDataResponse.user.address || "Nie podano", 
+        dateOfBirth: userDataResponse.user.dateOfBirth || "Nie podano"
       }
     : null;
+
+  // Беремо останні візити (наприклад, 3 штуки)
+  const recentAppointments = appointmentsResponse?.myAppointments.slice(0, 3) || [];
+
+  // Форматувальник дати (щоб було як у дизайні: "5 Gru, 2025")
+  const formatDesignDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    // Отримуємо "5 gru"
+    const dayMonth = date.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short' });
+    // Робимо місяць з великої літери "5 Gru"
+    const capitalized = dayMonth.replace(/([a-zşżźcw]+)/, (match) => match.charAt(0).toUpperCase() + match.slice(1));
+    const year = date.getFullYear();
+    return `${capitalized}, ${year}`;
+  };
 
   // --- HANDLERS ---
 
   const handleLogout = async () => {
     try {
       if (userData?.id) {
-        await logout({ variables: { userId: userData.id } }); //
+        await logout({ variables: { userId: userData.id } });
       }
     } catch (err) {
       console.error("Logout error:", err);
     } finally {
-      // Очищення всього
-      await client.resetStore(); // Важливо! Очищає кеш Apollo
-      localStorage.removeItem("token");
+      await client.resetStore();
+      localStorage.removeItem("access_token");
       localStorage.removeItem("user");
-      localStorage.removeItem("accessToken"); // На всяк випадок, якщо ви використовуєте це ім'я
       router.push("/");
     }
   };
@@ -153,9 +159,9 @@ const Account: React.FC = () => {
       setEditForm({
         name: userData.name,
         email: userData.email,
-        phone: userData.phone,
-        dateOfBirth: userData.dateOfBirth,
-        address: userData.address,
+        phone: userData.phone === "Numer telefonu" ? "" : userData.phone,
+        dateOfBirth: userData.dateOfBirth === "Nie podano" ? "" : userData.dateOfBirth,
+        address: userData.address === "Nie podano" ? "" : userData.address,
       });
       setIsEditing(true);
     }
@@ -163,9 +169,7 @@ const Account: React.FC = () => {
 
   const handleEditSave = async () => {
     if (!userData || !editForm.name) return;
-
     try {
-      console.log(userData.id);
       await updateUser({
         variables: {
           updateUserInput: {
@@ -173,75 +177,48 @@ const Account: React.FC = () => {
             name: editForm.name,
             email: editForm.email,
             dateOfBirth: editForm.dateOfBirth,
+            phone: editForm.phone,
+            address: editForm.address
           },
         },
       });
-
-      // Оновлюємо localStorage, щоб при перезавантаженні email не зник
       const updatedLocalStorageUser = { ...userData, ...editForm };
       localStorage.setItem("user", JSON.stringify(updatedLocalStorageUser));
-
       setIsEditing(false);
     } catch (err) {
       console.error("Update error:", err);
-      alert("Не вдалося оновити дані. Спробуйте ще раз.");
+      alert("Не вдалося оновити дані.");
     }
   };
 
-  // --- RENDERING ---
-
-  if (loading || !userEmail) {
+  if (userLoading || !userId) {
     return (
       <div className="flex flex-col min-h-screen bg-custom1">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-slate-600">Ładowanie danych...</p>
-          </div>
+          <div className="w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
         </main>
         <Footer />
       </div>
     );
   }
 
-  if (error || !userData) {
+  if (userError || !userData) {
     return (
       <div className="flex flex-col min-h-screen bg-custom1">
         <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center text-red-500">
-            <p>
-              Błąd pobierania danych:{" "}
-              {error?.message || "Użytkownik nie znaleziony"}
-            </p>
-            <button
-              onClick={() => {
-                localStorage.clear();
-                router.push("/Login");
-              }}
-              className="mt-4 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
-            >
-              Wróć do logowania
-            </button>
-          </div>
+        <main className="flex-1 flex items-center justify-center p-4">
+            <p className="text-red-500 mb-4">Błąd pobierania danych.</p>
+            <button onClick={() => { localStorage.clear(); router.push("/Login"); }} className="bg-teal-600 text-white px-4 py-2 rounded">Wróć do logowania</button>
         </main>
         <Footer />
       </div>
     );
   }
 
-  const patientId = `#PT-${new Date().getFullYear()}-${userData.id
-    .slice(0, 4)
-    .padStart(4, "0")}`;
-
-  // --- SUB-COMPONENTS (Dashboard & Profile) ---
-  // (Залишаються майже без змін, але використовують userData з query)
-
+  // --- DASHBOARD CONTENT (ТВІЙ ДИЗАЙН) ---
   const DashboardContent = () => (
     <div className="space-y-6">
-      {/* ... (Ваш код для DashboardContent без змін) ... */}
-      {/* Я скоротив цю частину для читабельності, оскільки логіка відображення не змінилася */}
       <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-slate-800 font-bold text-lg">
@@ -255,27 +232,32 @@ const Account: React.FC = () => {
           </Link>
         </div>
         <div className="space-y-4">
-          {mockAppointments.map((apt) => (
-            // ... rendering appointments
+          {/* Якщо немає візитів, можна показати заглушку, або пустий список */}
+          {recentAppointments.length === 0 && (
+             <p className="text-sm text-slate-500 text-center py-4">Brak zaplanowanych wizyt</p>
+          )}
+
+          {/* Використовуємо реальні дані (recentAppointments) замість mockAppointments */}
+          {recentAppointments.map((apt) => (
             <div
               key={apt.id}
               className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl"
             >
               <Image
-                src={ImageCard1}
-                alt={apt.doctorName}
+                src={ImageCard1} // Поки заглушка, бо у юзера немає фото лікаря в API
+                alt={apt.staff.fullName}
                 width={48}
                 height={48}
                 className="w-12 h-12 rounded-full object-cover"
               />
               <div className="flex-1 min-w-0">
                 <h4 className="font-semibold text-slate-800 truncate">
-                  {apt.doctorName}
+                  {apt.staff.fullName}
                 </h4>
-                <p className="text-sm text-slate-500">{apt.specialty}</p>
+                <p className="text-sm text-slate-500">{apt.staff.specialty}</p>
                 <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
                   <span className="flex items-center gap-1">
-                    <Calendar size={12} /> {apt.date}
+                    <Calendar size={12} /> {formatDesignDate(apt.date)}
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock size={12} /> {apt.time}
@@ -286,10 +268,10 @@ const Account: React.FC = () => {
           ))}
         </div>
       </div>
-      {/* ... Інші частини Dashboard (Ulubieni lekarze, Quick Actions) ... */}
     </div>
   );
 
+  // --- PROFILE CONTENT ---
   const ProfileContent = () => (
     <div className="space-y-4">
       <div className="bg-white rounded-2xl shadow-sm p-5">
@@ -297,44 +279,21 @@ const Account: React.FC = () => {
           <h3 className="text-slate-800 font-bold text-lg">Dane osobowe</h3>
           {isEditing ? (
             <div className="flex gap-2">
-              <button
-                onClick={() => setIsEditing(false)}
-                className="p-2 text-slate-400 hover:text-red-600 bg-red-50 rounded-lg"
-              >
-                <X size={18} />
-              </button>
-              <button
-                onClick={handleEditSave}
-                disabled={saving}
-                className="p-2 text-slate-400 hover:text-teal-600 bg-teal-50 rounded-lg"
-              >
-                <Check size={18} />
-              </button>
+              <button onClick={() => setIsEditing(false)} className="p-2 text-slate-400 hover:text-red-600 bg-red-50 rounded-lg"><X size={18} /></button>
+              <button onClick={handleEditSave} disabled={saving} className="p-2 text-slate-400 hover:text-teal-600 bg-teal-50 rounded-lg"><Check size={18} /></button>
             </div>
           ) : (
-            <button
-              onClick={handleEditStart}
-              className="p-2 text-slate-400 hover:text-teal-600 bg-teal-50 rounded-lg"
-            >
-              <Pencil size={18} />
-            </button>
+            <button onClick={handleEditStart} className="p-2 text-slate-400 hover:text-teal-600 bg-teal-50 rounded-lg"><Pencil size={18} /></button>
           )}
         </div>
 
         <div className="space-y-4">
-          {/* Name Input (Якщо редагуємо) */}
+          {/* Name */}
           {isEditing && (
             <div className="flex items-start gap-3">
               <div className="flex-1">
                 <p className="text-teal-600 text-sm mb-1">Imię i Nazwisko</p>
-                <input
-                  type="text"
-                  value={editForm.name || ""}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, name: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
-                />
+                <input type="text" value={editForm.name || ""} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
               </div>
             </div>
           )}
@@ -345,36 +304,35 @@ const Account: React.FC = () => {
             <div className="flex-1">
               <p className="text-teal-600 text-sm mb-1">E-mail</p>
               {isEditing ? (
-                <input
-                  type="email"
-                  value={editForm.email || ""}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, email: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
+                <input type="email" value={editForm.email || ""} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} className="w-full px-3 py-2 border rounded-lg" />
               ) : (
                 <p className="text-slate-800">{userData?.email}</p>
               )}
             </div>
           </div>
 
-          {/* Phone (Mocked data handling) */}
+          {/* Phone */}
           <div className="flex items-start gap-3">
             <Phone className="text-teal-600 mt-2" size={20} />
             <div className="flex-1">
               <p className="text-teal-600 text-sm mb-1">Telefon</p>
               {isEditing ? (
-                <input
-                  type="tel"
-                  value={editForm.phone || ""}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, phone: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
+                <input type="tel" value={editForm.phone || ""} onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })} className="w-full px-3 py-2 border rounded-lg" placeholder="+48..." />
               ) : (
                 <p className="text-slate-800">{userData?.phone}</p>
+              )}
+            </div>
+          </div>
+          
+           {/* Address */}
+           <div className="flex items-start gap-3">
+            <MapPin className="text-teal-600 mt-2" size={20} />
+            <div className="flex-1">
+              <p className="text-teal-600 text-sm mb-1">Adres</p>
+              {isEditing ? (
+                <input type="text" value={editForm.address || ""} onChange={(e) => setEditForm({ ...editForm, address: e.target.value })} className="w-full px-3 py-2 border rounded-lg" placeholder="ul. ..." />
+              ) : (
+                <p className="text-slate-800">{userData?.address}</p>
               )}
             </div>
           </div>
@@ -385,14 +343,7 @@ const Account: React.FC = () => {
             <div className="flex-1">
               <p className="text-teal-600 text-sm mb-1">Data urodzenia</p>
               {isEditing ? (
-                <input
-                  type="date" // Змінив на date input для зручності
-                  value={editForm.dateOfBirth || "Nie podano"}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, dateOfBirth: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
+                <input type="date" value={editForm.dateOfBirth || ""} onChange={(e) => setEditForm({ ...editForm, dateOfBirth: e.target.value })} className="w-full px-3 py-2 border rounded-lg" />
               ) : (
                 <p className="text-slate-800">{userData?.dateOfBirth}</p>
               )}
@@ -401,25 +352,7 @@ const Account: React.FC = () => {
         </div>
       </div>
 
-      {/* Medical Info & Logout Button */}
-      <div className="bg-white rounded-2xl shadow-sm p-5">
-        <h3 className="text-slate-800 font-bold text-lg mb-4">
-          Informacje medyczne
-        </h3>
-        <div className="mb-4">
-          <p className="text-slate-500 text-sm mb-2">Grupa krwi</p>
-          <span className="inline-block bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-sm font-medium">
-            A+
-          </span>
-        </div>
-      </div>
-
-      <button
-        onClick={handleLogout}
-        className="w-full py-3 text-red-600 font-medium bg-white rounded-xl shadow-sm hover:bg-red-50 transition-colors"
-      >
-        Wyloguj się
-      </button>
+      <button onClick={handleLogout} className="w-full py-3 text-red-600 font-medium bg-white rounded-xl shadow-sm hover:bg-red-50 transition-colors">Wyloguj się</button>
     </div>
   );
 
@@ -458,9 +391,7 @@ const Account: React.FC = () => {
             <button
               onClick={() => setActiveTab("dashboard")}
               className={`flex-1 py-2.5 text-sm font-medium rounded-lg ${
-                activeTab === "dashboard"
-                  ? "bg-teal-600 text-white"
-                  : "text-slate-600"
+                activeTab === "dashboard" ? "bg-teal-600 text-white" : "text-slate-600"
               }`}
             >
               Pulpit
@@ -468,24 +399,17 @@ const Account: React.FC = () => {
             <button
               onClick={() => setActiveTab("profile")}
               className={`flex-1 py-2.5 text-sm font-medium rounded-lg ${
-                activeTab === "profile"
-                  ? "bg-teal-600 text-white"
-                  : "text-slate-600"
+                activeTab === "profile" ? "bg-teal-600 text-white" : "text-slate-600"
               }`}
             >
               Profil
             </button>
           </div>
-          {activeTab === "dashboard" ? (
-            <DashboardContent />
-          ) : (
-            <ProfileContent />
-          )}
+          {activeTab === "dashboard" ? <DashboardContent /> : <ProfileContent />}
         </div>
 
         {/* Desktop Layout */}
         <div className="hidden md:block max-w-7xl mx-auto px-6 py-8">
-          {/* Верхня картка профілю для десктопу */}
           <div className="bg-gradient-to-r from-teal-600 via-teal-700 to-teal-800 rounded-3xl shadow-xl overflow-hidden mb-8">
             <div className="p-8 flex items-center justify-between">
               <div className="flex items-center gap-6">
@@ -522,11 +446,10 @@ const Account: React.FC = () => {
 
           <div className="grid lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
-              <DashboardContent />{" "}
-              {/* Спрощено, щоб не дублювати код, але тут буде контент дешборду */}
+              <DashboardContent />
             </div>
             <div className="space-y-6">
-              <ProfileContent /> {/* Тут буде сайдбар з даними */}
+              <ProfileContent />
             </div>
           </div>
         </div>

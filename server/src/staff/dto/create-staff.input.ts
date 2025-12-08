@@ -1,31 +1,51 @@
 import { InputType, Field, Int } from '@nestjs/graphql';
-import { IsEmail, IsString, MinLength, IsOptional, IsDateString, IsInt } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, IsOptional, IsInt } from 'class-validator';
 
 @InputType()
 export class CreateStaffInput {
   @Field()
+  @IsNotEmpty()
   @IsString()
   fullName: string;
 
   @Field()
+  @IsNotEmpty()
   @IsEmail()
   email: string;
 
   @Field()
-  @MinLength(6)
+  @IsNotEmpty()
+  @IsString()
   password: string;
-
-  @Field(() => Int)
-  @IsInt()
-  roomNumber: number;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
   specialty?: string;
 
+  // ✅ Використовуємо пряму назву 'location'
   @Field({ nullable: true })
   @IsOptional()
-  @IsDateString()
+  @IsString()
+  location?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  url?: string;
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  assessment?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   dateOfBirth?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  description?: string;
 }

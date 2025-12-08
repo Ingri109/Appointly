@@ -51,7 +51,7 @@ const LogIn = ({ onToggleForm }: LogInProps) => {
           setMessage("Sukces! Przekierowywanie...");
 
           // Зберігаємо токен та дані користувача
-          localStorage.setItem("token", data.login.accessToken);
+          localStorage.setItem("access_token", data.login.accessToken);
           localStorage.setItem("user", JSON.stringify(data.login.user));
 
           // Переходимо на сторінку акаунту

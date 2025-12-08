@@ -1,9 +1,9 @@
 import { gql } from '@apollo/client';
 
 // User queries
-export const GET_USER_BY_EMAIL = gql`
-  query GetUser($email: String!) {
-    user(email: $email) {
+export const GET_USER_BY_ID = gql`
+  query GetUser($id: String!) {
+    user(id: $id) {
       id
       name
       email
@@ -32,10 +32,12 @@ export const GET_STAFF_MEMBER_QUERY = gql`
       id
       fullName
       email
-      roomNumber
       specialty
       dateOfBirth
-      
+      url
+      assessment
+      location
+      description
     }
   }
 `;
@@ -46,13 +48,37 @@ export const GET_ALL_STAFF_QUERY = gql`
       id
       fullName
       email
-      roomNumber
       specialty
       dateOfBirth
+      url
+      assessment
+      location
     }
   }
 `;
 
-// Alias for workers (staff are workers in this system)
+export const GET_BOOKED_SLOTS_QUERY = gql`
+  query GetBookedSlots($staffId: String!, $date: String!) {
+    getBookedSlots(staffId: $staffId, date: $date)
+  }
+`;
+
+export const GET_MY_APPOINTMENTS_QUERY = gql`
+  query MyAppointments {
+    myAppointments {
+      id
+      date
+      time
+      status
+      staff {
+        id
+        fullName
+        specialty
+        location
+      }
+    }
+  }
+`;
+
 export const GET_ALL_WORKERS_QUERY = GET_ALL_STAFF_QUERY;
 export const GET_WORKER_BY_ID_QUERY = GET_STAFF_MEMBER_QUERY;

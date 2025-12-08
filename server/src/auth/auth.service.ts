@@ -9,7 +9,7 @@ import * as bcrypt from 'bcrypt';
 import { StaffService } from '../staff/staff.service';
 import { RegisterInput, LoginInput } from './dto/auth.dto';
 import { CreateStaffInput } from '../staff/dto/create-staff.input';
-import { LoginStaffInput } from '../staff/dto/login-staff.input'
+import { LoginStaffInput } from '../staff/dto/login-staff.input';
 
 @Injectable()
 export class AuthService {
@@ -36,28 +36,23 @@ export class AuthService {
 
   async login(input: LoginInput) {
     // --- DEBUG START ---
-    console.log('1. Отримано від фронтенду:', JSON.stringify(input, null, 2));
-    
+
     const user = await this.userService.findByEmail(input.email);
-    
-    console.log('2. Знайдено юзера в БД:', user ? user.email : 'Не знайдено');
-    console.log('3. Хеш пароля з БД:', user?.password);
-    // --- DEBUG END ---
-  
+
     if (!user) {
-      throw new UnauthorizedException('Nieprawidłowy adres e-mail lub hasło'); 
+      throw new UnauthorizedException('Nieprawidłowy adres e-mail lub hasło');
     }
-  
+
     // Саме тут виникає помилка, якщо п.1 або п.3 пусті
     const isPasswordValid = await bcrypt.compare(input.password, user.password);
-    
+
     if (!isPasswordValid) {
       throw new UnauthorizedException('Nieprawidłowy adres e-mail lub hasło');
     }
-    
+
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRefreshToken(user.id, tokens.refreshToken);
-  
+
     return { ...tokens, user };
   }
 
@@ -69,20 +64,28 @@ export class AuthService {
   async registerStaff(input: CreateStaffInput) {
     const newStaff = await this.staffService.create(input);
     const tokens = await this.getTokens(newStaff.id, newStaff.email);
-    await this.staffService.updateRefreshToken(newStaff.id, tokens.refreshToken);
-    
+    await this.staffService.updateRefreshToken(
+      newStaff.id,
+      tokens.refreshToken,
+    );
+
     return { ...tokens, user: newStaff };
   }
 
   async loginStaff(input: LoginStaffInput) {
     const staff = await this.staffService.findOne(input.id);
     if (!staff) {
-      throw new UnauthorizedException('Працівника з таким ID не знайдено');
+      throw new UnauthorizedException(
+        'Nie znaleziono pracownika o takim identyfikatorze.',
+      );
     }
 
-    const isPasswordValid = await bcrypt.compare(input.password, staff.password);
+    const isPasswordValid = await bcrypt.compare(
+      input.password,
+      staff.password,
+    );
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Невірний пароль');
+      throw new UnauthorizedException('Nieprawidłowe hasło');
     }
 
     const tokens = await this.getTokens(staff.id, staff.email);
@@ -109,11 +112,8 @@ export class AuthService {
     ]);
     return { accessToken: at, refreshToken: rt };
   }
-  
-  async updateRefreshToken(userId: string, refreshToken: string){
+
+  async updateRefreshToken(userId: string, refreshToken: string) {
     await this.userService.updateRefreshToken(userId, refreshToken);
   }
-
- 
-
 }

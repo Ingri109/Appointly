@@ -10,6 +10,7 @@ import { StaffModule } from './staff/staff.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as path from 'path';
+import { AppointmentModule } from './appointment/appointment.module'
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import * as path from 'path';
     UserModule,
     StaffModule,
     AuthModule,
+    AppointmentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

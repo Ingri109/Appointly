@@ -41,6 +41,11 @@ export class UserService {
     .getOne();
   }
 
+
+  async findOne(id: string): Promise<User | null> {
+    return this.userRepository.findOneBy({ id });
+  }
+
   async update(id: string, updateUserInput: UpdateUserInput): Promise<User> {
     if (!id) {
       throw new NotFoundException(`ID не передано`);
