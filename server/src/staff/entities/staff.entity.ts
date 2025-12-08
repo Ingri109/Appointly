@@ -3,10 +3,12 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  OneToMany
 } from 'typeorm';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { Appointment } from '../../appointment/entities/appointment.entity';
 
-@ObjectType()  
+@ObjectType()
 @Entity('staff')
 export class Staff {
   @Field(() => String)
@@ -24,13 +26,21 @@ export class Staff {
   @Column()
   password: string;
 
-  @Field(() => Int)
-  @Column()
-  roomNumber: number
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  specialty?: string;
 
-  @Field()
-  @Column()
-  specialty?: string
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  location?: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  url?: string;
+
+  @Field(() => Int, { nullable: true })
+  @Column({ nullable: true })
+  assessment?: number;
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'date', nullable: true })
@@ -41,4 +51,12 @@ export class Staff {
 
   @Column({ nullable: true, type: 'varchar' })
   hashedRefreshToken?: string | null;
+
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'text', nullable: true })
+  description?: string | null;
+
+  @Field(() => [Appointment], { nullable: true })
+  @OneToMany(() => Appointment, (appointment) => appointment.staff)
+  appointments?: Appointment[];
 }

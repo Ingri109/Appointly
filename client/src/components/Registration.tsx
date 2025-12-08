@@ -52,7 +52,7 @@ const Registration = ({ onToggleForm }: RegistrationProps) => {
       
       // Зберігаємо токен та дані користувача
       if (data?.register?.accessToken) {
-          localStorage.setItem('token', data.register.accessToken);
+          localStorage.setItem('access_token', data.register.accessToken);
           localStorage.setItem('user', JSON.stringify(data.register.user));
       }
 

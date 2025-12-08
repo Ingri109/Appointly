@@ -24,12 +24,21 @@ const CardForBooking = ( {worker}: CardForBookingProps) =>{
                 </div>
                 
                 {/* Info */}
+                {/* min-w-0 тут критично важливий для роботи truncate всередині flex-контейнера */}
                 <div className="flex-1 min-w-0 flex flex-col">
                     <div className="min-w-0">
+                        {/* Тут truncate вже був */}
                         <h4 className="text-slate-900 font-bold text-base truncate">{worker.fullName}</h4>
+                        
                         <div className="text-sm text-slate-500 space-y-0.5">
-                            <p>Lokalizacja: <span className="text-slate-700">{worker.location}</span></p>
-                            <p>Specjalizacja: <span className="text-slate-700">{worker.category}</span></p>
+                            {/* 👇 ДОДАНО truncate сюди */}
+                            <p className="truncate">
+                                Lokalizacja: <span className="text-slate-700">{worker.location}</span>
+                            </p>
+                            {/* 👇 ДОДАНО truncate сюди */}
+                            <p className="truncate">
+                                Specjalizacja: <span className="text-slate-700">{worker.category}</span>
+                            </p>
                         </div>
                     </div>
                     
@@ -41,7 +50,7 @@ const CardForBooking = ( {worker}: CardForBookingProps) =>{
                         </div>
                         <Link 
                             href={`/Booking/${worker.id}`} 
-                            className="text-sm font-medium text-white bg-teal-600 py-2 px-4 rounded-full hover:bg-teal-700 transition-all hover:scale-105"
+                            className="text-sm font-medium text-white bg-teal-600 py-2 px-4 rounded-full hover:bg-teal-700 transition-all hover:scale-105 whitespace-nowrap"
                         >
                             Umów wizytę
                         </Link>

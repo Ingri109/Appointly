@@ -39,7 +39,7 @@ export function MobileSideMenu() {
   }, [isOpen]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('access_token');
     localStorage.removeItem('user');
     setIsOpen(false);
     router.push('/');

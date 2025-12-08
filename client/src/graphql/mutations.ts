@@ -102,3 +102,14 @@ export const REMOVE_USER_MUTATION = gql`
     removeUser(id: $id)
   }
 `;
+
+export const CREATE_APPOINTMENT_MUTATION = gql`
+  mutation CreateAppointment($input: CreateAppointmentInput!) {
+    createAppointment(createAppointmentInput: $input) {
+      id
+      date
+      time
+      status
+    }
+  }
+`;

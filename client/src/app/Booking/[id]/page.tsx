@@ -1,24 +1,27 @@
-// app/Booking/[id]/page.tsx
 "use client";
 
 import { useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@apollo/client/react";
+import { useQuery, useMutation } from "@apollo/client/react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Stars from "@/components/Stars";
-import { GET_STAFF_MEMBER_QUERY } from "@/graphql/queries";
-import { ArrowLeft, MapPin, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+// Не забудь, що в queries.ts має бути запит, який повертає description і location!
+import { GET_STAFF_MEMBER_QUERY, GET_BOOKED_SLOTS_QUERY } from "@/graphql/queries";
+import { CREATE_APPOINTMENT_MUTATION } from "@/graphql/mutations";
+import { ArrowLeft, MapPin, Clock, ChevronLeft, ChevronRight, Info } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import ImageCard1 from "@/imgs/ImageCard1.png";
 
+// 1. Оновлюємо типи, додаємо description та location
 type StaffMember = {
   id: string;
   fullName: string;
   email: string;
-  roomNumber: number;
-  specialty: string;
+  specialty?: string;
+  location?: string;     // ✅ Додано
+  description?: string;  // ✅ Додано
   dateOfBirth?: string;
 };
 
@@ -26,9 +29,8 @@ type StaffMemberResponse = {
   staffMember: StaffMember;
 };
 
-type Props = {
-  params: Promise<{ id: string }>;
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+type BookedSlotsResponse = {
+  getBookedSlots: string[];
 };
 
 const timeSlots = [
@@ -36,20 +38,67 @@ const timeSlots = [
   "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"
 ];
 
-export default function WorkerPage({ params }: Props) {
-  const { id } = use(params);
+export default function WorkerPage({ params }: any) {
+  const resolvedParams = use(params) as { id: string };
+  const { id } = resolvedParams;
   const router = useRouter();
 
-  const { data, loading, error } = useQuery<StaffMemberResponse>(GET_STAFF_MEMBER_QUERY, {
+  // Отримуємо дані лікаря
+  const { data: staffData, loading: staffLoading, error: staffError } = useQuery<StaffMemberResponse>(GET_STAFF_MEMBER_QUERY, {
     variables: { id },
     skip: !id,
   });
 
+  console.log(staffData)
+
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [selectedTime, setSelectedTime] = useState<string>("09:30");
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [submitting, setSubmitting] = useState(false);
 
+  // Форматуємо дату
+  const formattedDate = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+
+  // Отримуємо зайняті слоти
+  const { data: slotsData } = useQuery<BookedSlotsResponse>(GET_BOOKED_SLOTS_QUERY, {
+    variables: { staffId: id, date: formattedDate },
+    skip: !id,
+    fetchPolicy: "network-only",
+  });
+
+  const bookedSlots = slotsData?.getBookedSlots || [];
+
+  const [createAppointment] = useMutation(CREATE_APPOINTMENT_MUTATION, {
+    onCompleted: () => {
+      alert("Wizyta została pomyślnie zarezerwowana!");
+      router.push("/Visits");
+    },
+    onError: (err) => {
+      alert(`Błąd rezerwacji: ${err.message}`);
+    }
+  });
+
+  const handleSubmit = async () => {
+    if (!id || !selectedTime) return;
+    setSubmitting(true);
+    try {
+      await createAppointment({
+        variables: {
+          input: {
+            staffId: id,
+            date: formattedDate,
+            time: selectedTime,
+          }
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Календарна логіка
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
@@ -57,76 +106,33 @@ export default function WorkerPage({ params }: Props) {
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
     const startingDay = firstDay.getDay();
-    
     const days: (number | null)[] = [];
-    for (let i = 0; i < startingDay; i++) {
-      days.push(null);
-    }
-    for (let i = 1; i <= daysInMonth; i++) {
-      days.push(i);
-    }
+    for (let i = 0; i < startingDay; i++) days.push(null);
+    for (let i = 1; i <= daysInMonth; i++) days.push(i);
     return days;
   };
 
-  const handlePrevMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
-  };
-
-  const handleNextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
-  };
-
+  const handlePrevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+  const handleNextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+  
   const handleDateSelect = (day: number) => {
     const newDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
     setSelectedDate(newDate);
+    setSelectedTime(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!id) return;
-    
-    setSubmitting(true);
-    try {
-      alert("Rezerwacja powiodła się!");
-      router.push("/Visits");
-    } catch (err) {
-      console.error(err);
-      alert("Wystąpił nieoczekiwany błąd.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  if (loading) {
+  // Render Loading/Error
+  if (staffLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-custom1">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-lg">Ładowanie danych specjalisty...</p>
-        </div>
+        <div className="w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
-  if (error || !data?.staffMember) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-custom1">
-        <div className="text-center">
-          <h2 className="text-xl text-red-600 mb-4">Błąd</h2>
-          <p>{error?.message || "Nie znaleziono specjalisty"}</p>
-          <button
-            onClick={() => router.back()}
-            className="mt-4 px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700"
-          >
-            Powrót
-          </button>
-        </div>
-      </div>
-    );
-  }
+  if (staffError || !staffData?.staffMember) return <div className="p-10 text-center">Nie znaleziono lekarza</div>;
 
-  const staff = data.staffMember;
+  const staff = staffData.staffMember;
   const monthNames = ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"];
   const dayNames = ["Nd", "Pn", "Wt", "Śr", "Cz", "Pt", "So"];
   const days = getDaysInMonth(currentMonth);
@@ -135,146 +141,149 @@ export default function WorkerPage({ params }: Props) {
     <div className="flex flex-col min-h-screen bg-custom1">
       <Header />
       <main className="flex-1 overflow-y-auto">
-        <div className="max-w-6xl mx-auto px-4 py-4 md:py-6">
-          {/* Back Link - Mobile Only */}
-          <Link 
-            href="/Booking" 
-            className="md:hidden inline-flex items-center gap-1 text-teal-600 font-medium mb-4 hover:text-teal-700"
-          >
-            <ArrowLeft size={18} />
-            <span>Powrót</span>
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          <Link href="/Booking" className="md:hidden inline-flex items-center gap-1 text-teal-600 font-medium mb-4 hover:text-teal-700">
+            <ArrowLeft size={18} /><span>Powrót</span>
           </Link>
 
-          {/* Doctor Info Card */}
-          <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm mb-4">
-            <div className="flex items-start gap-4">
-              <Image 
-                src={ImageCard1} 
-                alt={staff.fullName}
-                width={80}
-                height={80}
-                className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover border-2 border-slate-100"
-              />
-              <div className="flex-1">
-                <h2 className="text-lg md:text-xl font-bold text-slate-900">{staff.fullName}</h2>
-                <div className="flex items-center gap-1 text-slate-500 text-sm mt-1">
-                  <MapPin size={14} />
-                  <span>Lublin</span>
-                </div>
-                <div className="flex items-center gap-1 mt-2">
-                  <Stars stylesStar="w-4 h-4" />
-                  <span className="text-sm font-medium text-slate-700 ml-1">5</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-4 pt-4 border-t">
-              <span className="inline-block bg-teal-50 text-teal-700 px-3 py-1 rounded-full text-sm font-medium">
-                Specjalizacja: {staff.specialty || "Specjalista"}
-              </span>
-            </div>
+          {/* --- КАРТКА ЛІКАРЯ (ОНОВЛЕНА) --- */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm mb-6 border border-slate-100">
+             <div className="flex flex-col md:flex-row gap-6">
+               {/* Аватар */}
+               <div className="flex-shrink-0">
+                 <Image 
+                    src={ImageCard1} // Тут можна додати логіку для реального фото, якщо є url
+                    alt={staff.fullName} 
+                    width={100} 
+                    height={100} 
+                    className="w-24 h-24 rounded-full object-cover border-4 border-slate-50 shadow-sm" 
+                 />
+               </div>
+
+               {/* Інформація */}
+               <div className="flex-1">
+                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
+                    <div>
+                        <h1 className="text-2xl font-bold text-slate-900">{staff.fullName}</h1>
+                        <p className="text-teal-600 font-medium text-lg">{staff.specialty || "Lekarz specjalista"}</p>
+                    </div>
+                    <div className="flex items-center gap-1 bg-amber-50 px-3 py-1.5 rounded-lg self-start">
+                        <Stars stylesStar="w-5 h-5" />
+                        <span className="text-slate-700 font-bold ml-1">5.0</span>
+                    </div>
+                 </div>
+
+                 {/* Локація */}
+                 <div className="flex items-center gap-2 text-slate-500 mb-4">
+                    <MapPin size={18} className="text-slate-400" />
+                    <span>{staff.location || "Lokalizacja nieznana"}</span>
+                 </div>
+
+                 {/* Опис (Description) */}
+                 <div className="pt-4 border-t border-slate-100">
+                    <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide mb-2 flex items-center gap-2">
+                        <Info size={16} className="text-teal-600"/> 
+                        O lekarzu
+                    </h3>
+                    <p className="text-slate-600 text-sm leading-relaxed">
+                        {staff.description 
+                            ? staff.description 
+                            : "Brak dodatkowego opisu dla tego specjalisty."}
+                    </p>
+                 </div>
+               </div>
+             </div>
           </div>
 
-          {/* Desktop: Side by side layout */}
-          <div className="grid md:grid-cols-2 gap-4 mb-4">
-            {/* Calendar Section */}
-            <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm">
-              <h3 className="text-lg font-bold text-slate-900 mb-4">Wybierz datę</h3>
-              
-              {/* Month Navigation */}
-              <div className="flex items-center justify-between mb-4">
-                <button onClick={handlePrevMonth} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                  <ChevronLeft size={20} />
-                </button>
-                <span className="font-semibold text-slate-800">
-                  {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
-                </span>
-                <button onClick={handleNextMonth} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-              
-              {/* Day Names */}
-              <div className="grid grid-cols-7 gap-1 mb-2">
-                {dayNames.map(day => (
-                  <div key={day} className="text-center text-sm text-slate-500 py-2 font-medium">{day}</div>
-                ))}
-              </div>
-              
-              {/* Calendar Days */}
-              <div className="grid grid-cols-7 gap-1">
-                {days.map((day, index) => (
-                  <button
-                    key={index}
-                    onClick={() => day && handleDateSelect(day)}
-                    disabled={!day}
-                    className={`
-                      aspect-square flex items-center justify-center text-sm rounded-lg transition-colors
-                      ${!day ? 'invisible' : ''}
-                      ${day === selectedDate.getDate() && 
-                        currentMonth.getMonth() === selectedDate.getMonth() && 
-                        currentMonth.getFullYear() === selectedDate.getFullYear()
-                        ? 'bg-teal-600 text-white font-semibold' 
-                        : 'hover:bg-teal-50 text-slate-700'}
-                    `}
-                  >
-                    {day}
-                  </button>
-                ))}
-              </div>
+          <div className="grid md:grid-cols-2 gap-6 mb-4">
+            {/* Calendar */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 h-fit">
+                <h3 className="text-lg font-bold text-slate-900 mb-4">Wybierz datę wizyty</h3>
+                <div className="flex justify-between items-center mb-6 bg-slate-50 p-2 rounded-xl">
+                    <button onClick={handlePrevMonth} className="p-2 hover:bg-white hover:shadow-sm rounded-lg transition-all"><ChevronLeft className="text-slate-600"/></button>
+                    <span className="font-bold text-slate-800 text-lg">{monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}</span>
+                    <button onClick={handleNextMonth} className="p-2 hover:bg-white hover:shadow-sm rounded-lg transition-all"><ChevronRight className="text-slate-600"/></button>
+                </div>
+                <div className="grid grid-cols-7 gap-2">
+                    {dayNames.map(day => <div key={day} className="text-center text-xs font-bold text-slate-400 uppercase py-2">{day}</div>)}
+                    {days.map((day, i) => (
+                        <button 
+                            key={i} 
+                            onClick={() => day && handleDateSelect(day)}
+                            disabled={!day}
+                            className={`aspect-square flex items-center justify-center rounded-xl text-sm font-medium transition-all duration-200
+                                ${!day ? 'invisible' : ''}
+                                ${day === selectedDate.getDate() && currentMonth.getMonth() === selectedDate.getMonth()
+                                ? 'bg-teal-600 text-white shadow-md scale-105' 
+                                : 'hover:bg-teal-50 text-slate-700 hover:text-teal-700'}
+                            `}
+                        >
+                            {day}
+                        </button>
+                    ))}
+                </div>
             </div>
 
-            {/* Time Selection */}
-            <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm flex flex-col">
-              <div className="flex items-center gap-2 mb-4">
-                <Clock size={20} className="text-teal-600" />
-                <h3 className="text-lg font-bold text-slate-900">Wybierz godzinę</h3>
+            {/* Time Slots */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col h-full">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="p-2 bg-teal-100 rounded-lg text-teal-700">
+                    <Clock size={20} />
+                </div>
+                <div>
+                    <h3 className="text-lg font-bold text-slate-900">Dostępne godziny</h3>
+                    <p className="text-xs text-slate-500">Dla {selectedDate.toLocaleDateString()}</p>
+                </div>
               </div>
               
-              <div className="grid grid-cols-3 gap-2 mb-4">
-                {timeSlots.map(time => (
-                  <button
-                    key={time}
-                    onClick={() => setSelectedTime(time)}
-                    className={`
-                      py-3 px-4 rounded-xl text-sm font-medium transition-colors
-                      ${selectedTime === time 
-                        ? 'bg-teal-600 text-white shadow-md' 
-                        : 'bg-slate-100 text-slate-700 hover:bg-teal-50 hover:text-teal-700'}
-                    `}
-                  >
-                    {time}
-                  </button>
-                ))}
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
+                {timeSlots.map(time => {
+                  const isBooked = bookedSlots.includes(time);
+                  return (
+                    <button
+                      key={time}
+                      onClick={() => !isBooked && setSelectedTime(time)}
+                      disabled={isBooked}
+                      className={`
+                        py-2.5 px-2 rounded-lg text-sm font-medium transition-all border
+                        ${isBooked 
+                          ? 'bg-slate-50 text-slate-300 border-transparent cursor-not-allowed line-through decoration-slate-300' 
+                          : selectedTime === time 
+                            ? 'bg-teal-600 text-white border-teal-600 shadow-md transform scale-105' 
+                            : 'bg-white text-slate-600 border-slate-200 hover:border-teal-400 hover:text-teal-600 hover:bg-teal-50'
+                        }
+                      `}
+                    >
+                      {time}
+                    </button>
+                  );
+                })}
               </div>
 
-              {/* Selected Date & Time Summary */}
-              <div className="mt-auto p-4 bg-teal-50 rounded-xl">
-                <p className="text-sm text-teal-700 font-medium mb-1">Wybrana data i godzina:</p>
-                <p className="text-lg font-bold text-teal-900">
-                  {selectedDate.getDate()} {monthNames[selectedDate.getMonth()]} {selectedDate.getFullYear()}, {selectedTime}
-                </p>
-              </div>
+              <div className="mt-auto pt-6 border-t border-slate-100">
+                <div className="flex justify-between items-end mb-4">
+                    <div>
+                        <p className="text-xs text-slate-500 mb-1">Wybrany termin:</p>
+                        <p className="text-base font-bold text-slate-800">
+                             {selectedDate.getDate()} {monthNames[selectedDate.getMonth()]} {selectedDate.getFullYear()}
+                        </p>
+                    </div>
+                    <div className="text-right">
+                         <p className="text-xs text-slate-500 mb-1">Godzina:</p>
+                         <p className="text-xl font-bold text-teal-600">{selectedTime || "--:--"}</p>
+                    </div>
+                </div>
 
-              {/* Desktop Book Button */}
-              <button
-                onClick={handleSubmit}
-                disabled={submitting}
-                className="hidden md:block mt-4 w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
-              >
-                {submitting ? "Rezerwacja..." : "Zarezerwuj wizytę"}
-              </button>
+                <button
+                    onClick={handleSubmit}
+                    disabled={submitting || !selectedTime}
+                    className="w-full bg-teal-600 hover:bg-teal-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-teal-200"
+                >
+                    {submitting ? "Przetwarzanie..." : "Potwierdź rezerwację"}
+                </button>
+              </div>
             </div>
           </div>
-
-          {/* Book Button - Mobile Only */}
-          <button
-            onClick={handleSubmit}
-            disabled={submitting}
-            className="md:hidden w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-4 px-8 rounded-xl transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
-          >
-            {submitting ? "Rezerwacja..." : "Zarezerwuj wizytę"}
-          </button>
         </div>
       </main>
       <Footer />
